@@ -13,10 +13,24 @@
 
 $(document).ready(function(){
 	
-	var anki = $("<div></div>");
+	// button & action: clear localStorage
+	var button_clear = $("<button>").text("Clear");
+	button_clear.click(function(){
+		localStorage.clear();
+		anki.children("div").remove();
+	});
+	var anki = $("<div>").append(button_clear);
 	$("body > div").after(anki);
 	// $("#stage").css("width", "70%");
 	// anki.css({"width": "30%", "float": "right"});
+	
+	// display of localStorage
+	for (var index = 0; index < localStorage.length; index++) {
+		var key = localStorage.key(index);
+		// alert(key);
+		// var value = localStorage.getItem(key);
+		anki.append(key);
+	}
 	
 	// <h1> Wort
 	var word = $("h1").text()
@@ -47,8 +61,13 @@ $(document).ready(function(){
 		content.children("button").remove();
 		// alert(content.html());
 		
-		anki.append($("<div></div>").append(definition.html()));
-		anki.append($("<div></div>").append(content.html()));
+		// html() returns innerHTML
+		var anki_front = $("<div>").append($("<div class='front'>").append(content.html()));
+		var anki_back = $("<div>").append($("<div class='back'>").append(definition.html()));
+		anki.append(anki_front);
+		// anki.append(anki_back);
+		// alert(anki_front.html());
+		localStorage.setItem(anki_front.html(), anki_back.html());
 	});
 	
 	// Beispiele
