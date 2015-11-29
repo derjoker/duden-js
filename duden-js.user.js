@@ -11,6 +11,38 @@
 // $("h1").hide()
 // alert('Hallo duden! Word missing ...');
 
+function LocalData() {
+	
+	this.local = window.localStorage
+	
+	this.getItem = function(key) {
+		return this.local.getItem(key);
+	}
+	
+	this.getAllItems = function() {
+		var m = new Map();
+		
+		for (var index = 0; index < this.local.length; index++) {
+			var key = this.local.key(index);
+			var value = this.local.getItem(key);
+			m.set(key, value);
+		}
+		
+		return m;
+	}
+	
+	this.setItem = function(key, value) {
+		this.local.setItem(key, value);
+	}
+	
+	this.clear = function() {
+		this.local.clear();
+	}
+}
+
+// var ls = new LocalData();
+// alert(ls.getAllItems());
+
 $(document).ready(function(){
 	
 	// button & action: clear localStorage
