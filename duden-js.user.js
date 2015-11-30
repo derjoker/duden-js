@@ -38,6 +38,14 @@ function LocalData() {
 	this.clear = function() {
 		this.local.clear();
 	}
+	
+	this.load = function(container) {
+		container.empty();
+		this.getAllItems().forEach(function(value, key, map){
+			container.append(key);
+			container.append(value);
+		});
+	}
 }
 
 // var ls = new LocalData();
@@ -45,24 +53,44 @@ function LocalData() {
 
 $(document).ready(function(){
 	
-	// button & action: clear localStorage
+	var localdata = new LocalData();
+	
+	/*
+	View
+	*/
+	// placeholder (div) for anki
+	var anki = $("<div id='anki'>");
+	
+	// anki content
+	var ankicontent = $("<div id='ankicontent'>");
+	
+	// button & action
 	var button_clear = $("<button>").text("Clear");
+	var button_update = $("<button>").text("Update");
+	
+	// var select_filter = $("<select>");
+	
+	// clear content & local data
 	button_clear.click(function(){
-		localStorage.clear();
-		anki.children("div").remove();
+		localdata.clear();
+		localdata.load(ankicontent);
 	});
-	var anki = $("<div>").append(button_clear);
+	
+	// update local data
+	button_update.click(function(){
+		localdata.load(ankicontent);
+	});
+	
+	anki.append(button_clear);
+	anki.append(button_update);
+	// anki.append(select_filter);
+	anki.append(ankicontent);
 	$("body > div").after(anki);
 	// $("#stage").css("width", "70%");
 	// anki.css({"width": "30%", "float": "right"});
 	
-	// display of localStorage
-	for (var index = 0; index < localStorage.length; index++) {
-		var key = localStorage.key(index);
-		// alert(key);
-		// var value = localStorage.getItem(key);
-		anki.append(key);
-	}
+	// display of local data
+	localdata.load(ankicontent);
 	
 	// <h1> Wort
 	var word = $("h1").text()
@@ -99,7 +127,7 @@ $(document).ready(function(){
 		anki.append(anki_front);
 		// anki.append(anki_back);
 		// alert(anki_front.html());
-		localStorage.setItem(anki_front.html(), anki_back.html());
+		localdata.setItem(anki_front.html(), anki_back.html());
 	});
 	
 	// Beispiele
