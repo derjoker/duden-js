@@ -42,8 +42,9 @@ function LocalData() {
 	this.load = function(container) {
 		container.empty();
 		this.getAllItems().forEach(function(value, key, map){
-			container.append(key);
-			container.append(value);
+			container.append($("<div>").text(key + "\t" + value));
+			// container.append(key);
+			// container.append(value);
 		});
 	}
 }
@@ -54,6 +55,7 @@ function LocalData() {
 $(document).ready(function(){
 	
 	var localdata = new LocalData();
+	var csv = new csvWriter();
 	
 	/*
 	View
@@ -67,7 +69,8 @@ $(document).ready(function(){
 	// button & action
 	var button_clear = $("<button>").text("Clear");
 	var button_update = $("<button>").text("Update");
-	
+	var button_save = $("<button>").text("Save");
+
 	// var select_filter = $("<select>");
 	
 	// clear content & local data
@@ -81,8 +84,20 @@ $(document).ready(function(){
 		localdata.load(ankicontent);
 	});
 	
+	// save as csv
+	button_save.click(function(){
+		var header = "data:text/csv;charset=utf-8,";
+		var csvContent = "";
+		localdata.getAllItems().forEach(function(value, key, map){
+			csvContent += csv.escapeCol(key) + "," + csv.escapeCol(value) + "\n";
+		});
+		var encodedUri = header + encodeURIComponent(csvContent);
+		window.open(encodedUri);
+	});
+	
 	anki.append(button_clear);
 	anki.append(button_update);
+	anki.append(button_save);
 	// anki.append(select_filter);
 	anki.append(ankicontent);
 	$("body > div").after(anki);
@@ -122,12 +137,13 @@ $(document).ready(function(){
 		// alert(content.html());
 		
 		// html() returns innerHTML
-		var anki_front = $("<div>").append($("<div class='front'>").append(content.html()));
-		var anki_back = $("<div>").append($("<div class='back'>").append(definition.html()));
-		anki.append(anki_front);
+		var anki_front = '<div class="front">' + content.html() + "</div>";
+		var anki_back = '<div class="back">' + word + " : " + definition.html() + "</div>";
+		ankicontent.append($("<div>").text(anki_front + "\t" + anki_back));
+		// anki.append(anki_front);
 		// anki.append(anki_back);
 		// alert(anki_front.html());
-		localdata.setItem(anki_front.html(), anki_back.html());
+		localdata.setItem(anki_front, anki_back);
 	});
 	
 	// Beispiele
@@ -139,3 +155,61 @@ $(document).ready(function(){
 	anki_Wendungen.append(button_add)
 	
 });
+
+/**
+ * Class for creating csv strings
+ * Handles multiple data types
+ * Objects are cast to Strings
+ **/
+
+function csvWriter(del, enc) {
+    this.del = del || ','; // CSV Delimiter
+    this.enc = enc || '"'; // CSV Enclosure
+
+    // Convert Object to CSV column
+    this.escapeCol = function (col) {
+        if(isNaN(col)) {
+            // is not boolean or numeric
+            if (!col) {
+                // is null or undefined
+                col = '';
+            } else {
+                // is string or object
+                col = String(col);
+                if (col.length > 0) {
+                    // use regex to test for del, enc, \r or \n
+                    // if(new RegExp( '[' + this.del + this.enc + '\r\n]' ).test(col)) {
+
+                    // escape inline enclosure
+                    col = col.split( this.enc ).join( this.enc + this.enc );
+
+                    // wrap with enclosure
+                    col = this.enc + col + this.enc;
+                }
+            }
+        }
+        return col;
+    };
+
+    // Convert an Array of columns into an escaped CSV row
+    this.arrayToRow = function (arr) {
+        var arr2 = arr.slice(0);
+
+        var i, ii = arr2.length;
+        for(i = 0; i < ii; i++) {
+            arr2[i] = this.escapeCol(arr2[i]);
+        }
+        return arr2.join(this.del);
+    };
+
+    // Convert a two-dimensional Array into an escaped multi-row CSV 
+    this.arrayToCSV = function (arr) {
+        var arr2 = arr.slice(0);
+
+        var i, ii = arr2.length;
+        for(i = 0; i < ii; i++) {
+            arr2[i] = this.arrayToRow(arr2[i]);
+        }
+        return arr2.join("\r\n");
+    };
+}
