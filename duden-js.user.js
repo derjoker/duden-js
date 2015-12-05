@@ -109,6 +109,11 @@ $(document).ready(function(){
 		localdata.getAllItems().forEach(function(value, key, map){
 			csvContent += csv.escapeCol(key) + "," + csv.escapeCol(value) + "\n";
 		});
+		
+		// clear local data since it will saved
+		localdata.clear();
+		// localdata.load(ankicontent);
+		
 		var encodedUri = header + encodeURIComponent(csvContent);
 		window.open(encodedUri);
 	});
