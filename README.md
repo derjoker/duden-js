@@ -1,4 +1,19 @@
 # duden-js
-scrap items as anki card
+build vocabulary from [duden.de](http://www.duden.de/)
 
-hmm
+## Installation
+
+* Firefox
+* Addon: Greasemonkey
+* duden-js.user.js
+
+## Vocabulary Builder
+
+* Lookup
+* Add
+* Save
+* Clear
+
+## Anki
+
+* Import (update existing notes when first field matches)
