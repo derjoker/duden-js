@@ -54,6 +54,18 @@ function LocalData() {
 
 $(document).ready(function(){
 	
+	/*
+	Double click to lookup & open
+	*/
+	$("body").dblclick(function(){
+		var selection = window.getSelection() ||
+						document.getSelection() ||
+						document.selection.createRange();
+		// alert(selection);
+		var link = "http://www.duden.de/suchen/dudenonline/" + selection;
+		window.open(link);
+	});
+	
 	var localdata = new LocalData();
 	var csv = new csvWriter();
 	
