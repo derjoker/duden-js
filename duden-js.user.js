@@ -126,7 +126,7 @@ $(document).ready(function(){
 	// alert(section.Beispiele);
 	// alert($("h2"));
 	
-	// button & action
+	// button & action: Add
 	var button_add = $("<button>").text("Add");
 	button_add.click(function(){
 		var definition = $(this).parentsUntil("section").parent().parent().clone();
@@ -146,13 +146,37 @@ $(document).ready(function(){
 		localdata.setItem(anki_front, anki_back);
 	});
 	
-	// Beispiele
-	var anki_Beispiele = $("h3:contains('Beispiele') ~ * > li");
-	anki_Beispiele.append(button_add);
+	var button_add2 = $("<button>").text("Add");
+	button_add2.click(function(){
+		var definition = $(this).parent().parent().clone();
+		// alert(definition.html());
+		definition.children(".term-section").remove();
+		// alert(definition.html());
+		var content = $(this).parent().clone();
+		// content.children(["h3", "button"]).remove();
+		content.children("h3").remove();
+		content.children("button").remove();				
+		// alert(content.html());
+		
+		$(this).parent().children("button").remove();
+		
+		// html() returns innerHTML
+		var anki_front = '<div class="front">' + content.html() + "</div>";
+		var anki_back = '<div class="back">' + word + " : " + definition.html() + "</div>";
+		ankicontent.append($("<div>").text(anki_front + "\t" + anki_back));
+		// anki.append(anki_front);
+		// anki.append(anki_back);
+		// alert(anki_front.html());
+		localdata.setItem(anki_front, anki_back);
+	});
 	
-	// Wendungen
-	var anki_Wendungen = $("h3:contains('Wendungen, Redensarten, Sprichwörter') ~ * > li");
-	anki_Wendungen.append(button_add)
+	var h3_filtered = $("h3").filter(function(index){
+		return ['Beispiel', 'Beispiele', 'Wendungen, Redensarten, Sprichwörter'].indexOf($(this).text()) >= 0;
+	});
+	// multiple
+	h3_filtered.siblings("ul").find("li").append(button_add);
+	// single
+	h3_filtered.siblings("span").parent().append(button_add2);
 	
 });
 
