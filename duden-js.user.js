@@ -63,7 +63,13 @@ $(document).ready(function(){
 						document.selection.createRange();
 		// alert(selection);
 		var link = "http://www.duden.de/suchen/dudenonline/" + selection;
-		window.open(link);
+		// [to-do: improve] wait ... tries to open twice
+		$.ajax({
+			url: link,
+			success: function(){
+				window.open(link);
+			}
+		});
 	});
 	
 	var localdata = new LocalData();
