@@ -12,33 +12,33 @@
 // alert('Hallo duden! Word missing ...');
 
 function LocalData() {
-	
+
 	this.local = window.localStorage
-	
+
 	this.getItem = function(key) {
 		return this.local.getItem(key);
 	}
-	
+
 	this.getAllItems = function() {
 		var m = new Map();
-		
+
 		for (var index = 0; index < this.local.length; index++) {
 			var key = this.local.key(index);
 			var value = this.local.getItem(key);
 			m.set(key, value);
 		}
-		
+
 		return m;
 	}
-	
+
 	this.setItem = function(key, value) {
 		this.local.setItem(key, value);
 	}
-	
+
 	this.clear = function() {
 		this.local.clear();
 	}
-	
+
 	this.load = function(container) {
 		container.empty();
 		this.getAllItems().forEach(function(value, key, map){
@@ -53,7 +53,7 @@ function LocalData() {
 // alert(ls.getAllItems());
 
 $(document).ready(function(){
-	
+
 	/*
 	Double click to lookup & open
 	*/
@@ -71,37 +71,37 @@ $(document).ready(function(){
 			}
 		});
 	});
-	
+
 	var localdata = new LocalData();
 	var csv = new csvWriter();
-	
+
 	/*
 	View
 	*/
 	// placeholder (div) for anki
 	var anki = $("<div id='anki'>");
-	
+
 	// anki content
 	var ankicontent = $("<div id='ankicontent'>");
-	
+
 	// button & action
 	var button_clear = $("<button>").text("Clear");
 	var button_update = $("<button>").text("Update");
 	var button_save = $("<button>").text("Save");
 
 	// var select_filter = $("<select>");
-	
+
 	// clear content & local data
 	button_clear.click(function(){
 		localdata.clear();
 		localdata.load(ankicontent);
 	});
-	
+
 	// update local data
 	button_update.click(function(){
 		localdata.load(ankicontent);
 	});
-	
+
 	// save as csv
 	button_save.click(function(){
 		var header = "data:text/csv;charset=utf-8,";
@@ -109,15 +109,15 @@ $(document).ready(function(){
 		localdata.getAllItems().forEach(function(value, key, map){
 			csvContent += csv.escapeCol(key) + "," + csv.escapeCol(value) + "\n";
 		});
-		
+
 		// clear local data since it will saved
 		localdata.clear();
 		// localdata.load(ankicontent);
-		
+
 		var encodedUri = header + encodeURIComponent(csvContent);
 		window.open(encodedUri);
 	});
-	
+
 	anki.append(button_clear);
 	anki.append(button_update);
 	anki.append(button_save);
@@ -126,29 +126,29 @@ $(document).ready(function(){
 	$("body > div").after(anki);
 	// $("#stage").css("width", "70%");
 	// anki.css({"width": "30%", "float": "right"});
-	
+
 	// display of local data
 	localdata.load(ankicontent);
-	
+
 	// <h1> Wort
 	var word = $("h1").text()
-	
+
 	// <h2>
 	var section = {
-		Rechtschreibung: "Rechtschreibung", 
-		Bedeutungsübersicht: "Bedeutungsübersicht", 
-		// "Wussten Sie schon?", 
-		// Synonyme: "Synonyme zu <em>lassen</em>", 
-		Aussprache: "Aussprache", 
-		Herkunft: "Herkunft", 
-		Grammatik: "Grammatik", 
-		// "Typische Verbindungen", 
-		Beispiele: "Bedeutungen, Beispiele und Wendungen", 
+		Rechtschreibung: "Rechtschreibung",
+		Bedeutungsübersicht: "Bedeutungsübersicht",
+		// "Wussten Sie schon?",
+		// Synonyme: "Synonyme zu <em>lassen</em>",
+		Aussprache: "Aussprache",
+		Herkunft: "Herkunft",
+		Grammatik: "Grammatik",
+		// "Typische Verbindungen",
+		Beispiele: "Bedeutungen, Beispiele und Wendungen",
 		Blättern: "Blättern"
 	};
 	// alert(section.Beispiele);
 	// alert($("h2"));
-	
+
 	// button & action: Add
 	var button_add = $("<button>").text("Add");
 	button_add.click(function(){
@@ -158,7 +158,7 @@ $(document).ready(function(){
 		var content = $(this).parent();
 		content.children("button").remove();
 		// alert(content.html());
-		
+
 		// html() returns innerHTML
 		var anki_front = '<div class="front">' + content.html() + "</div>";
 		var anki_back = '<div class="back">' + word + " : " + definition.html() + "</div>";
@@ -168,7 +168,7 @@ $(document).ready(function(){
 		// alert(anki_front.html());
 		localdata.setItem(anki_front, anki_back);
 	});
-	
+
 	var button_add2 = $("<button>").text("Add");
 	button_add2.click(function(){
 		var definition = $(this).parent().parent().clone();
@@ -178,11 +178,11 @@ $(document).ready(function(){
 		var content = $(this).parent().clone();
 		// content.children(["h3", "button"]).remove();
 		content.children("h3").remove();
-		content.children("button").remove();				
+		content.children("button").remove();
 		// alert(content.html());
-		
+
 		$(this).parent().children("button").remove();
-		
+
 		// html() returns innerHTML
 		var anki_front = '<div class="front">' + content.html() + "</div>";
 		var anki_back = '<div class="back">' + word + " : " + definition.html() + "</div>";
@@ -192,15 +192,76 @@ $(document).ready(function(){
 		// alert(anki_front.html());
 		localdata.setItem(anki_front, anki_back);
 	});
-	
+
 	var h3_filtered = $("h3").filter(function(index){
-		return ['Beispiel', 'Beispiele', 'Wendungen, Redensarten, Sprichwörter'].indexOf($(this).text()) >= 0;
+		return ['Beispiel', 'Beispiele'].indexOf($(this).text()) >= 0;
 	});
 	// multiple
 	h3_filtered.siblings("ul").find("li").append(button_add);
 	// single
 	h3_filtered.siblings("span").parent().append(button_add2);
-	
+
+	/*
+	<h3>Wendungen, Redensarten, Sprichwörter</h3>
+	*/
+	var h3_wendungen = $("h3").filter(function(index){
+		return 'Wendungen, Redensarten, Sprichwörter' == $(this).text();
+	});
+	// multiple
+	var bt_add_wendungen = $("<button>").text("Add Wendungen");
+	bt_add_wendungen.click(function(){
+		var definition = $(this).parentsUntil("section").parent().parent().clone();
+		definition.children(".term-section").remove();
+
+		var content = $(this).parent().clone();
+		content.children("button").remove();
+		var wendung = content.children("span.iwtext").remove();
+		// alert(wendung.html());
+
+		$(this).parent().children("button").remove();
+
+		// html() returns innerHTML
+		var anki_front = '<div class="front">' + wendung.html() + "</div>";
+		tmp = '';
+		// alert('"'+definition.html()+'"');
+		if (definition.html() != ' '){
+			tmp = '<br>' + word + ' : ' + definition.html();
+		}
+		var anki_back = '<div class="back">' + content.html() + tmp + "</div>";
+		ankicontent.append($("<div>").text(anki_front + "\t" + anki_back));
+
+		localdata.setItem(anki_front, anki_back);
+	});
+	h3_wendungen.siblings("ul").find("li").append(bt_add_wendungen);
+	// single
+	var bt_add_wendungen2 = $("<button>").text("Add Wendungen");
+	bt_add_wendungen2.click(function(){
+		var definition = $(this).parent().parent().clone();
+		// alert(definition.html());
+		definition.children(".term-section").remove();
+		// alert(definition.html());
+		var content = $(this).parent().clone();
+		// content.children(["h3", "button"]).remove();
+		content.children("h3").remove();
+		content.children("button").remove();
+		var wendung = content.children("span.iwtext").remove();
+
+		$(this).parent().children("button").remove();
+
+		// html() returns innerHTML
+		var anki_front = '<div class="front">' + wendung.html() + "</div>";
+		tmp = '';
+		// alert('"'+definition.html()+'"');
+		if (definition.html() != ' '){
+			tmp = '<br>' + word + ' : ' + definition.html();
+		}
+		var anki_back = '<div class="back">' + content.html() + tmp + "</div>";
+		ankicontent.append($("<div>").text(anki_front + "\t" + anki_back));
+
+		localdata.setItem(anki_front, anki_back);
+	});
+	h3_wendungen.siblings("span").parent().append(bt_add_wendungen2);
+
 });
 
 /**
@@ -249,7 +310,7 @@ function csvWriter(del, enc) {
         return arr2.join(this.del);
     };
 
-    // Convert a two-dimensional Array into an escaped multi-row CSV 
+    // Convert a two-dimensional Array into an escaped multi-row CSV
     this.arrayToCSV = function (arr) {
         var arr2 = arr.slice(0);
 
