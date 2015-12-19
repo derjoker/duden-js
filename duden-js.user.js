@@ -131,23 +131,7 @@ $(document).ready(function(){
 	localdata.load(ankicontent);
 
 	// <h1> Wort
-	var word = $("h1").text()
-
-	// <h2>
-	var section = {
-		Rechtschreibung: "Rechtschreibung",
-		Bedeutungsübersicht: "Bedeutungsübersicht",
-		// "Wussten Sie schon?",
-		// Synonyme: "Synonyme zu <em>lassen</em>",
-		Aussprache: "Aussprache",
-		Herkunft: "Herkunft",
-		Grammatik: "Grammatik",
-		// "Typische Verbindungen",
-		Beispiele: "Bedeutungen, Beispiele und Wendungen",
-		Blättern: "Blättern"
-	};
-	// alert(section.Beispiele);
-	// alert($("h2"));
+	var word = $("h1").text();
 
 	// button & action: Add
 	var button_add = $("<button>").text("Add");
@@ -163,8 +147,6 @@ $(document).ready(function(){
 		var anki_front = '<div class="front">' + content.html() + "</div>";
 		var anki_back = '<div class="back">' + word + " : " + definition.html() + "</div>";
 		ankicontent.append($("<div>").text(anki_front + "\t" + anki_back));
-		// anki.append(anki_front);
-		// anki.append(anki_back);
 		// alert(anki_front.html());
 		localdata.setItem(anki_front, anki_back);
 	});
@@ -187,8 +169,6 @@ $(document).ready(function(){
 		var anki_front = '<div class="front">' + content.html() + "</div>";
 		var anki_back = '<div class="back">' + word + " : " + definition.html() + "</div>";
 		ankicontent.append($("<div>").text(anki_front + "\t" + anki_back));
-		// anki.append(anki_front);
-		// anki.append(anki_back);
 		// alert(anki_front.html());
 		localdata.setItem(anki_front, anki_back);
 	});
