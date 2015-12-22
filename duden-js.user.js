@@ -140,21 +140,23 @@ $(document).ready(function(){
 	$("body > div").after(anki);
 
 	// button & action
+
 	var button_clear = $("<button>").text("Clear").click(function(){
 		// local.clear();
 		currentdata.clear();
 		ankicontent.update();
 	});
+	anki.append(button_clear);
+
 	// var button_update = $("<button>").text("Update").click(function(){
 	// 	ankicontent.update();
 	// });
+	// anki.append(button_update);
+
 	var button_save = $("<button>").text("Save");
-
-	anki.append(button_clear);
-	anki.append(button_update);
 	anki.append(button_save);
-	anki.append(ankicontent.anker);
 
+	anki.append(ankicontent.anker);
 	// display of local data
 	ankicontent.update();
 
