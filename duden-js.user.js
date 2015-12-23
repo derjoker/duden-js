@@ -173,6 +173,7 @@ $(document).ready(function(){
 
 		var bedeutung = $(this).parentsUntil("section").parent().parent().clone();
 		bedeutung.children(".term-section").remove();
+		bedeutung.children("figure").remove();
 		// console.log("bedeutung", bedeutung);
 
 		var key = content;
