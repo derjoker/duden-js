@@ -166,7 +166,19 @@ $(document).ready(function(){
 	Events
 	*/
 
-	var bt_toggle = $('<button class="vb_toggle">').click(function(){
+	var h3_filtered = $("h3").filter(function(index){
+		return ['Beispiel', 'Beispiele',
+						'Wendungen, Redensarten, Sprichwörter']
+						.indexOf($(this).text()) >= 0;
+	});
+	// multiple
+	h3_filtered.siblings("ul").children("li")
+		.append('<button class="vb_toggle">Add</button>');
+	// single
+	h3_filtered.siblings("span").parent()
+		.append('<button class="vb_toggle">Add</button>');
+
+	$("button.vb_toggle").click(function(){
 		var content = $(this).parent().clone();
 		content.children("button").remove();
 		// if there is ... (single)
@@ -209,21 +221,6 @@ $(document).ready(function(){
 
 		ankicontent.update();
 	});
-
-	bt_toggle.text("Add");
-	// anki.append(bt_toggle);
-
-	var h3_filtered = $("h3").filter(function(index){
-		return ['Beispiel', 'Beispiele',
-						'Wendungen, Redensarten, Sprichwörter']
-						.indexOf($(this).text()) >= 0;
-	});
-	// [to-do: bug] Mit­tel, das: no "Add" button for
-	// "er steht ohne Mittel da (ist völlig mittellos, verarmt)"
-	// multiple
-	h3_filtered.siblings("ul").find("li").append(bt_toggle);
-	// single
-	h3_filtered.siblings("span").parent().append(bt_toggle);
 
 	// "Add" -> "Remove", if exists
 	// $.map(local.obj, function(value, key) {});
