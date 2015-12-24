@@ -92,7 +92,7 @@ var ankicontent = {
 	anker: $("<div id='ankicontent'>"),
 
 	add: function(front, back) {
-		this.anker.append($("<div>").text(front + "\t" + back));
+		this.anker.append($("<div>").html(front + "<br />" + back));
 	},
 
 	append: function(m) {
