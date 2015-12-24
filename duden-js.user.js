@@ -55,7 +55,9 @@ var local = {
 }
 // console.log('local', local);
 
-var c_rs = ['<div name="', window.location.href.split('/')[4], '"></div>'].join('');
+var c_rs = ['<div name="',
+						window.location.href.split('/')[4].split('#')[0],
+						'"></div>'].join('');
 
 var currentdata = {
 	// <div name="rechtschreibung"></div>
