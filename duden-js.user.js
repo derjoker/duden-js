@@ -93,6 +93,8 @@ var ankicontent = {
 
 	add: function(front, back) {
 		this.anker.append($("<div>").html(front + "<br />" + back));
+		// console.log("front", front);
+		// console.log("back", back);
 	},
 
 	append: function(m) {
@@ -171,7 +173,7 @@ $(document).ready(function(){
 		content.children("h3").remove();
 		// console.log("content", content);
 
-		var bedeutung = $(this).parentsUntil("section").parent().parent().clone();
+		var bedeutung = $(this).parents("section.term-section").parent().clone();
 		bedeutung.children(".term-section").remove();
 		bedeutung.children("figure").remove();
 		// console.log("bedeutung", bedeutung);
@@ -190,6 +192,8 @@ $(document).ready(function(){
 			key = wendung;
 			value = w_info;
 		}
+		// console.log("key", key);
+		// console.log("value", value);
 
 		if ($(this).text() == "Add") {
 			currentdata.add(key.html(), value.html());
