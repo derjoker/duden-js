@@ -23,6 +23,18 @@ var local = {
 		// return JSON.parse(this.data.getItem(k));
 	},
 
+	getKeys: function() {
+		var keys = [];
+		for (var index = 0; index < this.data.length; index++) {
+			var key = this.data.key(index);
+			if (key.indexOf('div name') == 1) {
+				keys.push(key);
+			}
+		}
+		// console.log("keys", keys);
+		return keys;
+	},
+
 	getAllItems: function() {
 		var m = new Map();
 
@@ -53,6 +65,7 @@ var local = {
 		this.data.clear();
 	}
 }
+// local.getKeys();
 // console.log('local', local);
 
 function VBLocalItem(key) {
@@ -73,7 +86,52 @@ function VBLocalItem(key) {
 		this.data = {};
 		local.removeItem(this.key);
 	};
+
+	this.build = function() {
+		var ret = $(this.key);
+		$.map(this.data, function(v, k) {
+			ret.append($("<div class='front'>").html(k))
+				.append($("<br>"))
+				.append($("<div class='back'>").html(v));
+		});
+		return ret;
+	};
 };
+
+/*
+Output Format
+*/
+var VBMarkdown = {
+	keeplink: function(h) {
+		var tmp = $("<div>").html(h);
+		tmp.find("a").replaceWith(function() {
+			return ["[", $(this).text(), "]", "(", $(this).attr("href"), ")"].join("");
+		});
+		return tmp;
+	},
+
+	markdown: function() {}
+};
+
+var VBHTML = {
+	html: function() {}
+};
+
+/*
+Vocabulary Builder
+*/
+var VBuilder = {
+	build: function() {
+		local.getKeys().forEach(function(element, index, array) {
+			var vbLocalItem = new VBLocalItem(element);
+			console.log("vli output", vbLocalItem.build());
+		});
+	},
+
+	save: function() {}
+};
+VBuilder.build();
+console.log("VBuilder", VBuilder);
 
 // <div name="rechtschreibung"></div>
 var c_rs = ['<div name="',
@@ -108,33 +166,6 @@ var ankicontent = {
 	}
 };
 // console.log('ankicontent', ankicontent);
-
-/*
-Output Format
-*/
-var VBMarkdown = {
-	keeplink: function(h) {
-		var tmp = $("<div>").html(h);
-		tmp.find("a").replaceWith(function() {
-			return ["[", $(this).text(), "]", "(", $(this).attr("href"), ")"].join("");
-		});
-		return tmp;
-	},
-
-	markdown: function() {}
-};
-
-var VBHTML = {
-	html: function() {}
-};
-
-/*
-Vocabulary Builder
-*/
-var VBuilder = {
-	build: function() {},
-	save: function() {}
-};
 
 $(document).ready(function(){
 
