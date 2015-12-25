@@ -55,40 +55,33 @@ var local = {
 }
 // console.log('local', local);
 
+function VBLocalItem(key) {
+	this.key = key;
+	this.data = local.getItem(key);
+
+	this.add = function(k, v) {
+		this.data[k] = v;
+		local.setItem(this.key, this.data);
+	};
+
+	this.remove = function(k) {
+		delete this.data[k];
+		local.setItem(this.key, this.data);
+	};
+
+	this.clear = function() {
+		this.data = {};
+		local.removeItem(this.key);
+	};
+};
+
+// <div name="rechtschreibung"></div>
 var c_rs = ['<div name="',
 						window.location.href.split('/')[4].split('#')[0],
 						'"></div>'].join('');
-
-var currentdata = {
-	// <div name="rechtschreibung"></div>
-	// current: '<div name="' + window.location.href.split('/')[4] + '"></div>',
-	current: c_rs,
-
-	obj: local.getItem(c_rs),
-
-	add: function(k, v) {
-		// console.log('obj', this.obj);
-		this.obj[k] = v;
-		local.setItem(this.current, this.obj);
-		// console.log('obj2', this.obj);
-	},
-
-	remove: function(k) {
-		delete this.obj[k];
-		local.setItem(this.current, this.obj);
-	},
-
-	clear: function() {
-		this.obj = {};
-		local.removeItem(this.current);
-	}
-}
-// console.log('currentdata', currentdata);
-// currentdata.add(1,1);
+var currentdata = new VBLocalItem(c_rs);
 // currentdata.add(1,2);
-// currentdata.add(2,2);
-// currentdata.add(3,3);
-// currentdata.remove(2);
+// console.log('currentdata', currentdata);
 
 var ankicontent = {
 	anker: $("<div id='ankicontent'>"),
@@ -111,7 +104,7 @@ var ankicontent = {
 
 	update: function() {
 		// this.append(local.getAllItems());
-		this.append(currentdata.obj);
+		this.append(currentdata.data);
 	}
 };
 // console.log('ankicontent', ankicontent);
@@ -239,7 +232,6 @@ $(document).ready(function(){
 		if ($(this).text() == "Add") {
 			currentdata.add(key.html(), value.html());
 			$(this).text("Remove");
-			// alert("Added");
 		}
 		else {
 			currentdata.remove(key.html());
@@ -255,61 +247,3 @@ $(document).ready(function(){
 	// $.map(local.obj, function(value, key) {});
 
 });
-
-/**
- * Class for creating csv strings
- * Handles multiple data types
- * Objects are cast to Strings
- **/
-
-function csvWriter(del, enc) {
-    this.del = del || ','; // CSV Delimiter
-    this.enc = enc || '"'; // CSV Enclosure
-
-    // Convert Object to CSV column
-    this.escapeCol = function (col) {
-        if(isNaN(col)) {
-            // is not boolean or numeric
-            if (!col) {
-                // is null or undefined
-                col = '';
-            } else {
-                // is string or object
-                col = String(col);
-                if (col.length > 0) {
-                    // use regex to test for del, enc, \r or \n
-                    // if(new RegExp( '[' + this.del + this.enc + '\r\n]' ).test(col)) {
-
-                    // escape inline enclosure
-                    col = col.split( this.enc ).join( this.enc + this.enc );
-
-                    // wrap with enclosure
-                    col = this.enc + col + this.enc;
-                }
-            }
-        }
-        return col;
-    };
-
-    // Convert an Array of columns into an escaped CSV row
-    this.arrayToRow = function (arr) {
-        var arr2 = arr.slice(0);
-
-        var i, ii = arr2.length;
-        for(i = 0; i < ii; i++) {
-            arr2[i] = this.escapeCol(arr2[i]);
-        }
-        return arr2.join(this.del);
-    };
-
-    // Convert a two-dimensional Array into an escaped multi-row CSV
-    this.arrayToCSV = function (arr) {
-        var arr2 = arr.slice(0);
-
-        var i, ii = arr2.length;
-        for(i = 0; i < ii; i++) {
-            arr2[i] = this.arrayToRow(arr2[i]);
-        }
-        return arr2.join("\r\n");
-    };
-}
