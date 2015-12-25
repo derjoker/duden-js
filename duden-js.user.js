@@ -116,6 +116,33 @@ var ankicontent = {
 };
 // console.log('ankicontent', ankicontent);
 
+/*
+Output Format
+*/
+var VBMarkdown = {
+	keeplink: function(h) {
+		var tmp = $("<div>").html(h);
+		tmp.find("a").replaceWith(function() {
+			return ["[", $(this).text(), "]", "(", $(this).attr("href"), ")"].join("");
+		});
+		return tmp;
+	},
+
+	markdown: function() {}
+};
+
+var VBHTML = {
+	html: function() {}
+};
+
+/*
+Vocabulary Builder
+*/
+var VBuilder = {
+	build: function() {},
+	save: function() {}
+};
+
 $(document).ready(function(){
 
 	/*
