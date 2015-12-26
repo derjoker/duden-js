@@ -133,40 +133,6 @@ var VBuilder = {
 VBuilder.build();
 console.log("VBuilder", VBuilder);
 
-// <div name="rechtschreibung"></div>
-var c_rs = ['<div name="',
-						window.location.href.split('/')[4].split('#')[0],
-						'"></div>'].join('');
-var currentdata = new VBLocalItem(c_rs);
-// currentdata.add(1,2);
-// console.log('currentdata', currentdata);
-
-var ankicontent = {
-	anker: $("<div id='ankicontent'>"),
-
-	add: function(front, back) {
-		this.anker.append($("<div>").html(front + "<br />" + back));
-		// console.log("front", front);
-		// console.log("back", back);
-	},
-
-	append: function(m) {
-		this.anker.empty();
-		// console.log('m[para]', m);
-		$.map(m, function(value, key) {
-			// alert(key);
-			// alert(ankicontent.anker);
-			ankicontent.add(key, value);
-		});
-	},
-
-	update: function() {
-		// this.append(local.getAllItems());
-		this.append(currentdata.data);
-	}
-};
-// console.log('ankicontent', ankicontent);
-
 $(document).ready(function(){
 
 	/*
@@ -188,6 +154,19 @@ $(document).ready(function(){
 	});
 
 	/*
+	Data
+	*/
+	// <h1> Wort
+	var word = $("h1").text();
+	// <div name="rechtschreibung"></div>
+	var c_rs = ['<div name="',
+							window.location.href.split('/')[4].split('#')[0],
+							'"></div>'].join('');
+	var currentItem = new VBLocalItem(c_rs);
+	// currentItem.add(1,2);
+	// console.log('currentItem', currentItem);
+
+	/*
 	View
 	*/
 	// anker (div) for anki
@@ -198,7 +177,7 @@ $(document).ready(function(){
 
 	var button_clear = $("<button>").text("Clear").click(function(){
 		// local.clear();
-		currentdata.clear();
+		currentItem.clear();
 		ankicontent.update();
 	});
 	anki.append(button_clear);
@@ -210,6 +189,32 @@ $(document).ready(function(){
 
 	var button_save = $("<button>").text("Save");
 	anki.append(button_save);
+
+	var ankicontent = {
+		anker: $("<div id='ankicontent'>"),
+
+		add: function(front, back) {
+			this.anker.append($("<div>").html(front + "<br />" + back));
+			// console.log("front", front);
+			// console.log("back", back);
+		},
+
+		append: function(m) {
+			this.anker.empty();
+			// console.log('m[para]', m);
+			$.map(m, function(value, key) {
+				// alert(key);
+				// alert(ankicontent.anker);
+				ankicontent.add(key, value);
+			});
+		},
+
+		update: function() {
+			// this.append(local.getAllItems());
+			this.append(currentItem.data);
+		}
+	};
+	// console.log('ankicontent', ankicontent);
 
 	anki.append(ankicontent.anker);
 	// display of local data
@@ -243,29 +248,33 @@ $(document).ready(function(){
 		bedeutung.children("figure").remove();
 		// console.log("bedeutung", bedeutung);
 
-		var key = content;
-		var value = bedeutung;
-
 		// Wendung (better: re-assign key & value)
 		var wendung = content.children("span.iwtext");
 		// console.log("wendung", wendung);
 		var w_info = content.children("span.iw_rumpf_info");
 		// console.log("wendung info", w_info);
 
+		var key, value;
 		if (wendung.length != 0 && w_info.length != 0) {
 			// alert("inside wendung");
 			key = wendung;
 			value = w_info;
 		}
-		// console.log("key", key);
-		// console.log("value", value);
+		else {
+			key = content;
+			value = $("<div>")
+								.append($("<span>").text(word + " : "))
+								.append($("<span>").html(bedeutung.html()));
+		}
+		console.log("key", key);
+		console.log("value", value);
 
 		if ($(this).text() == "Add") {
-			currentdata.add(key.html(), value.html());
+			currentItem.add(key.html(), value.html());
 			$(this).text("Remove");
 		}
 		else {
-			currentdata.remove(key.html());
+			currentItem.remove(key.html());
 			$(this).text("Add");
 			// alert("Removed");
 		}
