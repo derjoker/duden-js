@@ -96,7 +96,7 @@ function VBItem(key) {
 					.append($("<div class='back'>").html(v))
 			);
 		});
-		return ret.html();
+		return $("<div>").append(ret).html();
 	};
 };
 
@@ -133,7 +133,11 @@ var VBuilder = {
 
 	buildMarkdown: function() {},
 
-	save: function() {}
+	save: function() {
+		var encodedUri = "data:text/html;charset=utf-8," + encodeURIComponent(this.buildHTML());
+		// var encodedUri = "data:text/html;charset=utf-8," + encodeURIComponent(this.buildMarkdown());
+		window.open(encodedUri);
+	}
 };
 // VBuilder.build();
 // console.log("VBuilder", VBuilder);
@@ -194,9 +198,7 @@ $(document).ready(function(){
 
 	var button_save = $("<button>").text("Save").click(function() {
 		// alert("save");
-		var header = "data:text/html;charset=utf-8,";
-		var encodedUri = header + encodeURIComponent(VBuilder.buildHTML());
-		window.open(encodedUri);
+		VBuilder.save();
 	});
 	anki.append(button_save);
 
@@ -204,7 +206,7 @@ $(document).ready(function(){
 		anker: $("<div id='ankicontent'>"),
 
 		add: function(front, back) {
-			this.anker.append($("<div>").html(front + "<br />" + back));
+			this.anker.append($("<div>").html(front + "<br>" + back));
 			// console.log("front", front);
 			// console.log("back", back);
 		},
