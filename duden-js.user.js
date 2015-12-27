@@ -98,6 +98,20 @@ function VBItem(key) {
 		});
 		return $("<div>").append(ret).html();
 	};
+
+	this.buildMarkdown = function() {
+		var tmp = ["## " + this.key];
+		$.map(this.data, function(v, k) {
+			tmp.push(
+				["### ",
+				$("<div>").html(VBMarkdown.keeplink(k)).text(),
+				"\n> ",
+				$("<div>").html(VBMarkdown.keeplink(v)).text(),
+				"\n"].join("")
+			);
+		});
+		return tmp.join("\n");
+	};
 };
 
 /*
@@ -131,11 +145,17 @@ var VBuilder = {
 		}).join("");
 	},
 
-	buildMarkdown: function() {},
+	buildMarkdown: function() {
+		return local.getKeys().map(function(k) {
+			var vbItem = new VBItem(k);
+			// console.log("output[html]", vbItem.buildHTML());
+			return vbItem.buildMarkdown();
+		}).join("\n\n");
+	},
 
 	save: function() {
-		var encodedUri = "data:text/html;charset=utf-8," + encodeURIComponent(this.buildHTML());
-		// var encodedUri = "data:text/html;charset=utf-8," + encodeURIComponent(this.buildMarkdown());
+		// var encodedUri = "data:text/html;charset=utf-8," + encodeURIComponent(this.buildHTML());
+		var encodedUri = "data:text/plain;charset=utf-8," + encodeURIComponent(this.buildMarkdown());
 		window.open(encodedUri);
 	}
 };
