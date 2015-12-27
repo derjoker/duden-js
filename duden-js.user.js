@@ -68,7 +68,7 @@ var local = {
 // local.getKeys();
 // console.log('local', local);
 
-function VBLocalItem(key) {
+function VBItem(key) {
 	this.key = key;
 	this.data = local.getItem(key);
 
@@ -87,14 +87,16 @@ function VBLocalItem(key) {
 		local.removeItem(this.key);
 	};
 
-	this.build = function() {
+	this.buildHTML = function() {
 		var ret = $(this.key);
 		$.map(this.data, function(v, k) {
-			ret.append($("<div class='front'>").html(k))
-				.append($("<br>"))
-				.append($("<div class='back'>").html(v));
+			ret.append(
+				$("<div class='vb_card'>")
+					.append($("<div class='front'>").html(k))
+					.append($("<div class='back'>").html(v))
+			);
 		});
-		return ret;
+		return ret.html();
 	};
 };
 
@@ -121,17 +123,20 @@ var VBHTML = {
 Vocabulary Builder
 */
 var VBuilder = {
-	build: function() {
-		local.getKeys().forEach(function(element, index, array) {
-			var vbLocalItem = new VBLocalItem(element);
-			console.log("vli output", vbLocalItem.build());
-		});
+	buildHTML: function() {
+		return local.getKeys().map(function(k) {
+			var vbItem = new VBItem(k);
+			// console.log("output[html]", vbItem.buildHTML());
+			return vbItem.buildHTML();
+		}).join("");
 	},
+
+	buildMarkdown: function() {},
 
 	save: function() {}
 };
-VBuilder.build();
-console.log("VBuilder", VBuilder);
+// VBuilder.build();
+// console.log("VBuilder", VBuilder);
 
 $(document).ready(function(){
 
@@ -162,7 +167,7 @@ $(document).ready(function(){
 	var c_rs = ['<div name="',
 							window.location.href.split('/')[4].split('#')[0],
 							'"></div>'].join('');
-	var currentItem = new VBLocalItem(c_rs);
+	var currentItem = new VBItem(c_rs);
 	// currentItem.add(1,2);
 	// console.log('currentItem', currentItem);
 
@@ -187,7 +192,12 @@ $(document).ready(function(){
 	// });
 	// anki.append(button_update);
 
-	var button_save = $("<button>").text("Save");
+	var button_save = $("<button>").text("Save").click(function() {
+		// alert("save");
+		var header = "data:text/html;charset=utf-8,";
+		var encodedUri = header + encodeURIComponent(VBuilder.buildHTML());
+		window.open(encodedUri);
+	});
 	anki.append(button_save);
 
 	var ankicontent = {
