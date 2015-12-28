@@ -70,49 +70,97 @@ var local = {
 
 function VBItem(key) {
 	this.key = key;
-	this.data = local.getItem(key);
-
-	this.add = function(k, v) {
-		this.data[k] = v;
-		local.setItem(this.key, this.data);
-	};
-
-	this.remove = function(k) {
-		delete this.data[k];
-		local.setItem(this.key, this.data);
-	};
-
-	this.clear = function() {
-		this.data = {};
-		local.removeItem(this.key);
-	};
-
-	this.buildHTML = function() {
-		var ret = $(this.key);
-		$.map(this.data, function(v, k) {
-			ret.append(
-				$("<div class='vb_card'>")
-					.append($("<div class='front'>").html(k))
-					.append($("<div class='back'>").html(v))
-			);
-		});
-		return $("<div>").append(ret).html();
-	};
-
-	this.buildMarkdown = function() {
-		var tmp = ["## " + this.key];
-		$.map(this.data, function(v, k) {
-			tmp.push(
-				["### ",
-				$("<div>").html(VBMarkdown.keeplink(k)).text(),
-				"\n> ",
-				$("<div>").html(VBMarkdown.keeplink(v)).text(),
-				"\n"].join("")
-			);
-		});
-		return tmp.join("\n");
-	};
+	this.sections = local.getItem(key);
 };
+
+VBItem.prototype.index = {
+	word: "word",
+	examples: "examples",
+	pronunciation: "pronunciation"
+};
+
+// save after any change of this.sections
+VBItem.prototype.save = function() {
+	local.setItem(this.key, this.sections);
+};
+
+VBItem.prototype.clear = function() {
+	this.sections = {};
+	local.removeItem(this.key);
+};
+
+VBItem.prototype.word = function(value) {
+	if (value === undefined) {
+		return this.sections[this.index.word];
+	}
+	else {
+		this.sections[this.index.word] = value;
+		this.save();
+	}
+};
+
+VBItem.prototype.examples = function() {
+	return this.sections[this.index.examples] || {};
+};
+
+VBItem.prototype.addExample = function(example, definition) {
+	this.sections[this.index.examples] = this.examples();
+	this.sections[this.index.examples][example] = definition;
+	this.save();
+};
+
+VBItem.prototype.removeExample = function(example) {
+	delete this.sections[this.index.examples][example];
+	this.save();
+}
+
+VBItem.prototype.pronunciation = function(value) {
+	if (value === undefined) {
+		return this.sections[this.index.pronunciation];
+	}
+	else {
+		this.sections[this.index.pronunciation] = value;
+		this.save();
+	}
+};
+
+// this.illustrations = new Object();
+
+VBItem.prototype.buildHTML = function() {
+	var ret = $(this.key);
+	$.map(this.examples(), function(v, k) {
+		ret.append(
+			$("<div class='vb_card'>")
+				.append($("<div class='front'>").html(k))
+				.append($("<div class='back'>").html(v))
+		);
+	});
+	return $("<div>").append(ret).html();
+};
+
+VBItem.prototype.buildMarkdown = function() {
+	var tmp = ["## " + this.key];
+	$.map(this.examples(), function(v, k) {
+		tmp.push(
+			["### ",
+			$("<div>").html(VBMarkdown.keeplink(k)).text(),
+			"\n> ",
+			$("<div>").html(VBMarkdown.keeplink(v)).text(),
+			"\n"].join("")
+		);
+	});
+	return tmp.join("\n");
+};
+
+// UnitTest
+// var vbItemTest = new VBItem("<div name='test'></div>");
+// vbItemTest.word("word");
+// console.log("Wort", vbItemTest.word());
+// vbItemTest.addExample(1, 1);
+// console.log("Beispiele", vbItemTest.examples());
+// vbItemTest.pronunciation("pronunciation");
+// console.log("Aussprache", vbItemTest.pronunciation());
+// console.log("Bilder", vbItemTest.illustrations());
 
 /*
 Output Format
@@ -192,7 +240,6 @@ $(document).ready(function(){
 							window.location.href.split('/')[4].split('#')[0],
 							'"></div>'].join('');
 	var currentItem = new VBItem(c_rs);
-	// currentItem.add(1,2);
 	// console.log('currentItem', currentItem);
 
 	/*
@@ -243,7 +290,7 @@ $(document).ready(function(){
 
 		update: function() {
 			// this.append(local.getAllItems());
-			this.append(currentItem.data);
+			this.append(currentItem.examples());
 		}
 	};
 	// console.log('ankicontent', ankicontent);
@@ -302,11 +349,11 @@ $(document).ready(function(){
 		console.log("value", value);
 
 		if ($(this).text() == "Add") {
-			currentItem.add(key.html(), value.html());
+			currentItem.addExample(key.html(), value.html());
 			$(this).text("Remove");
 		}
 		else {
-			currentItem.remove(key.html());
+			currentItem.removeExample(key.html());
 			$(this).text("Add");
 			// alert("Removed");
 		}
