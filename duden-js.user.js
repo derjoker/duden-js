@@ -303,6 +303,13 @@ $(document).ready(function(){
 	Events
 	*/
 
+	// Aussprache
+	$("a.audio").click(function() {
+		// alert($(this).parent().html());
+		currentItem.pronunciation($(this).parent().html());
+	});
+
+	// Bedeutungen, Beispiele und Wendungen
 	var h3_filtered = $("h3").filter(function(index){
 		return ['Beispiel', 'Beispiele',
 						'Wendungen, Redensarten, Sprichwörter']
