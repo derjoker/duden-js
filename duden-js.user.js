@@ -139,7 +139,13 @@ VBItem.prototype.buildHTML = function() {
 };
 
 VBItem.prototype.buildMarkdown = function() {
-	var tmp = ["## " + this.key];
+	// alert(this.word());
+	var h2 = "## " + $("<div>").append($(this.key).text(this.word())).html();
+	var tmp = [h2];
+	var audio = VBMarkdown.audio(this.pronunciation());
+	if (audio != undefined) {
+		tmp.push(audio);
+	}
 	$.map(this.examples(), function(v, k) {
 		tmp.push(
 			["### ",
@@ -172,6 +178,20 @@ var VBMarkdown = {
 			return ["[", $(this).text(), "]", "(", $(this).attr("href"), ")"].join("");
 		});
 		return tmp;
+	},
+
+	audio: function(h) {
+		if (h == undefined) {
+			return undefined;
+		}
+		var tmp = $("<div>").html(h);
+		tmp.find("a.audio").replaceWith(function() {
+			// alert($(this).attr("href"));
+			return ["<audio controls='controls' src='",
+							$(this).attr("href"),
+							"'></audio>"].join("");
+		});
+		return tmp.html();
 	},
 
 	markdown: function() {}
@@ -240,6 +260,9 @@ $(document).ready(function(){
 							window.location.href.split('/')[4].split('#')[0],
 							'"></div>'].join('');
 	var currentItem = new VBItem(c_rs);
+	if (currentItem.word() != word) {
+		currentItem.word(word);
+	}
 	// console.log('currentItem', currentItem);
 
 	/*
