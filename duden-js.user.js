@@ -137,9 +137,9 @@ VBItem.prototype.buildMarkdown = function() {
 	$.map(this.examples(), function(v, k) {
 		tmp.push(
 			["### ",
-			$("<div>").html(VBMarkdown.keeplink(k)).text(),
+			VBMarkdown.markdown(k),
 			"\n> ",
-			$("<div>").html(VBMarkdown.keeplink(v)).text(),
+			VBMarkdown.markdown(v),
 			"\n"].join("")
 		);
 	});
@@ -158,12 +158,21 @@ VBItem.prototype.buildMarkdown = function() {
 Output Format
 */
 var VBMarkdown = {
-	keeplink: function(h) {
+	// html -> html (with markdown link)
+	link: function(h) {
 		var tmp = $("<div>").html(h);
 		tmp.find("a").replaceWith(function() {
 			return ["[", $(this).text(), "]", "(", $(this).attr("href"), ")"].join("");
 		});
 		return tmp;
+	},
+
+	// html -> text
+	text: function(h) {
+		// escape special, like <>
+		return $("<div>").text(
+			$("<div>").html(h).text()
+		).html();
 	},
 
 	audio: function(h) {
@@ -180,7 +189,10 @@ var VBMarkdown = {
 		return tmp.html();
 	},
 
-	markdown: function() {}
+	markdown: function(h) {
+		// console.log(this.text(h));
+		return this.text(this.link(h));
+	}
 };
 
 var VBHTML = {
