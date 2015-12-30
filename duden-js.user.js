@@ -255,7 +255,8 @@ $(document).ready(function(){
 	*/
 	// anker (div) for anki
 	var anki = $("<div id='anki'>");
-	$("body > div").after(anki);
+	$("div#sidebar").children().remove();
+	$("div#sidebar").append(anki);
 
 	// button & action
 
