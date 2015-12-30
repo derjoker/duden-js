@@ -74,7 +74,6 @@ function VBItem(key) {
 };
 
 VBItem.prototype.index = {
-	word: "word",
 	examples: "examples",
 	pronunciation: "pronunciation"
 };
@@ -87,16 +86,6 @@ VBItem.prototype.save = function() {
 VBItem.prototype.clear = function() {
 	this.sections = {};
 	local.removeItem(this.key);
-};
-
-VBItem.prototype.word = function(value) {
-	if (value === undefined) {
-		return this.sections[this.index.word];
-	}
-	else {
-		this.sections[this.index.word] = value;
-		this.save();
-	}
 };
 
 VBItem.prototype.examples = function() {
@@ -139,8 +128,7 @@ VBItem.prototype.buildHTML = function() {
 };
 
 VBItem.prototype.buildMarkdown = function() {
-	// alert(this.word());
-	var h2 = "## " + $("<div>").append($(this.key).text(this.word())).html();
+	var h2 = "## " + $("<div>").append($(this.key)).html();
 	var tmp = [h2];
 	var audio = VBMarkdown.audio(this.pronunciation());
 	if (audio != undefined) {
@@ -160,8 +148,6 @@ VBItem.prototype.buildMarkdown = function() {
 
 // UnitTest
 // var vbItemTest = new VBItem("<div name='test'></div>");
-// vbItemTest.word("word");
-// console.log("Wort", vbItemTest.word());
 // vbItemTest.addExample(1, 1);
 // console.log("Beispiele", vbItemTest.examples());
 // vbItemTest.pronunciation("pronunciation");
@@ -255,14 +241,13 @@ $(document).ready(function(){
 	*/
 	// <h1> Wort
 	var word = $("h1").text();
-	// <div name="rechtschreibung"></div>
-	var c_rs = ['<div name="',
+	// <div name="rechtschreibung">wort</div>
+	var c_rs = ["<div name='",
 							window.location.href.split('/')[4].split('#')[0],
-							'"></div>'].join('');
+							"'>",
+							word,
+							"</div>"].join("");
 	var currentItem = new VBItem(c_rs);
-	if (currentItem.word() != word) {
-		currentItem.word(word);
-	}
 	// console.log('currentItem', currentItem);
 
 	/*
