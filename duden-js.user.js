@@ -124,6 +124,14 @@ VBItem.prototype.addIllustration = function(figure, definition) {
 	this.save();
 };
 
+VBItem.prototype.toArray = function() {
+  var ret = [];
+  $.map(this.examples(), function(v, k) {
+    ret.push([k, v]);
+  });
+  return ret;
+};
+
 VBItem.prototype.buildHTML = function() {
 	var ret = $(this.key);
 	$.map(this.examples(), function(v, k) {
@@ -212,6 +220,12 @@ var VBHTML = {
 Vocabulary Builder
 */
 var VBuilder = {
+  Format: {
+    HTML: 1,
+    CSV: 2,
+    Markdown: 3
+  },
+
 	buildHTML: function() {
 		return local.getKeys().map(function(k) {
 			var vbItem = new VBItem(k);
@@ -220,7 +234,16 @@ var VBuilder = {
 		}).join("");
 	},
 
-  buildCSV: function() {},
+  buildCSV: function() {
+    var csv = new csvWriter();
+    var tmp = [];
+    local.getKeys().map(function(k) {
+      var vbItem = new VBItem(k);
+      tmp = tmp.concat(vbItem.toArray());
+    });
+    // console.log(tmp);
+    return csv.arrayToCSV(tmp);
+  },
 
 	buildMarkdown: function() {
 		return local.getKeys().map(function(k) {
@@ -230,10 +253,25 @@ var VBuilder = {
 		}).join("\n\n");
 	},
 
-	save: function() {
-		// var encodedUri = "data:text/html;charset=utf-8," + encodeURIComponent(this.buildHTML());
-		var encodedUri = "data:text/plain;charset=utf-8," + encodeURIComponent(this.buildMarkdown());
-		window.open(encodedUri);
+	save: function(format) {
+    var encodedUri;
+
+    switch (format) {
+      case this.Format.HTML:
+        encodedUri = "data:text/html;charset=utf-8," + encodeURIComponent(this.buildHTML());
+        break;
+      case this.Format.CSV:
+        encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(this.buildCSV());
+        break;
+      case this.Format.Markdown:
+        encodedUri = "data:text/plain;charset=utf-8," + encodeURIComponent(this.buildMarkdown());
+        break;
+      default:
+        encodedUri = "data:text/plain;charset=utf-8,error: unknown format!"
+        break;
+    }
+
+    window.open(encodedUri);
 	}
 };
 // VBuilder.build();
@@ -281,7 +319,8 @@ $(document).ready(function(){
   $("body").prepend(all);
 
   all.append($("<button>").text("Save All").click(function() {
-    alert("Save All!");
+    // alert("Save All!");
+    VBuilder.save(VBuilder.Format.CSV);
   })).append($("<button>").text("Clear All").click(function() {
     local.clear();
     currentItem.clear();
@@ -310,7 +349,7 @@ $(document).ready(function(){
 
 	var button_save = $("<button>").text("Save").click(function() {
 		// alert("save");
-		VBuilder.save();
+		VBuilder.save(VBuilder.Format.Markdown);
 	});
 	anki.append(button_save);
 
@@ -435,3 +474,61 @@ $(document).ready(function(){
 	// $.map(local.obj, function(value, key) {});
 
 });
+
+/**
+ * Class for creating csv strings
+ * Handles multiple data types
+ * Objects are cast to Strings
+ **/
+
+function csvWriter(del, enc) {
+    this.del = del || ','; // CSV Delimiter
+    this.enc = enc || '"'; // CSV Enclosure
+
+    // Convert Object to CSV column
+    this.escapeCol = function (col) {
+        if(isNaN(col)) {
+            // is not boolean or numeric
+            if (!col) {
+                // is null or undefined
+                col = '';
+            } else {
+                // is string or object
+                col = String(col);
+                if (col.length > 0) {
+                    // use regex to test for del, enc, \r or \n
+                    // if(new RegExp( '[' + this.del + this.enc + '\r\n]' ).test(col)) {
+
+                    // escape inline enclosure
+                    col = col.split( this.enc ).join( this.enc + this.enc );
+
+                    // wrap with enclosure
+                    col = this.enc + col + this.enc;
+                }
+            }
+        }
+        return col;
+    };
+
+    // Convert an Array of columns into an escaped CSV row
+    this.arrayToRow = function (arr) {
+        var arr2 = arr.slice(0);
+
+        var i, ii = arr2.length;
+        for(i = 0; i < ii; i++) {
+            arr2[i] = this.escapeCol(arr2[i]);
+        }
+        return arr2.join(this.del);
+    };
+
+    // Convert a two-dimensional Array into an escaped multi-row CSV
+    this.arrayToCSV = function (arr) {
+        var arr2 = arr.slice(0);
+
+        var i, ii = arr2.length;
+        for(i = 0; i < ii; i++) {
+            arr2[i] = this.arrayToRow(arr2[i]);
+        }
+        return arr2.join("\r\n");
+    };
+}
