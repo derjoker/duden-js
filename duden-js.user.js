@@ -75,7 +75,8 @@ function VBItem(key) {
 
 VBItem.prototype.index = {
 	examples: "examples",
-	pronunciation: "pronunciation"
+	pronunciation: "pronunciation",
+	illustrations: "illustrations"
 };
 
 // save after any change of this.sections
@@ -101,7 +102,7 @@ VBItem.prototype.addExample = function(example, definition) {
 VBItem.prototype.removeExample = function(example) {
 	delete this.sections[this.index.examples][example];
 	this.save();
-}
+};
 
 VBItem.prototype.pronunciation = function(value) {
 	if (value === undefined) {
@@ -113,7 +114,15 @@ VBItem.prototype.pronunciation = function(value) {
 	}
 };
 
-// this.illustrations = new Object();
+VBItem.prototype.illustrations = function() {
+	return this.sections[this.index.illustrations] || {};
+};
+
+VBItem.prototype.addIllustration = function(figure, definition) {
+	this.sections[this.index.illustrations] = this.illustrations();
+	this.sections[this.index.illustrations][figure] = definition;
+	this.save();
+};
 
 VBItem.prototype.buildHTML = function() {
 	var ret = $(this.key);
@@ -328,6 +337,23 @@ $(document).ready(function(){
 	$("a.audio").click(function() {
 		// alert($(this).parent().html());
 		currentItem.pronunciation($(this).parent().html());
+	});
+
+	// Bilder
+	$("section figure").each(function() {
+		// console.log("figure", $(this).html());
+		var tmp = $(this).parent().clone();
+		// console.log("tmp", tmp);
+		tmp.children("section").remove();
+		var figure = tmp.children("figure").remove().wrap("<div>").parent().html();
+		// var definition = [word, " : ", tmp.wrap("<div>").parent().html()].join("");
+		var definition = $("<div>")
+                      .append($("<span>").text(word + " : "))
+                      .append($("<span>").html(tmp.wrap("<div>").parent().html()))
+                      .html();
+		// console.log("figure", figure);
+		// console.log("definition", definition);
+    currentItem.addIllustration(figure, definition)
 	});
 
 	// Bedeutungen, Beispiele und Wendungen
