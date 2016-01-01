@@ -220,6 +220,8 @@ var VBuilder = {
 		}).join("");
 	},
 
+  buildCSV: function() {},
+
 	buildMarkdown: function() {
 		return local.getKeys().map(function(k) {
 			var vbItem = new VBItem(k);
@@ -274,7 +276,20 @@ $(document).ready(function(){
 	/*
 	View
 	*/
-	// anker (div) for anki
+  // allItem@headline
+  var all = $("<div id='allItem'>");
+  $("body").prepend(all);
+
+  all.append($("<button>").text("Save All").click(function() {
+    alert("Save All!");
+  })).append($("<button>").text("Clear All").click(function() {
+    local.clear();
+    currentItem.clear();
+    ankicontent.update();
+  }));
+
+  // currentItem@sidebar
+  // anker (div) for anki
 	var anki = $("<div id='anki'>");
 	$("div#sidebar").children().remove();
 	$("div#sidebar").append(anki);
