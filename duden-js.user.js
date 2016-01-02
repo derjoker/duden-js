@@ -349,7 +349,9 @@ $(document).ready(function(){
 
 	var button_save = $("<button>").text("Save").click(function() {
 		// alert("save");
-		VBuilder.save(VBuilder.Format.Markdown);
+		// VBuilder.save(VBuilder.Format.Markdown);
+    var encodedUri = "data:text/plain;charset=utf-8," + encodeURIComponent(currentItem.buildMarkdown());
+    window.open(encodedUri);
 	});
 	anki.append(button_save);
 
