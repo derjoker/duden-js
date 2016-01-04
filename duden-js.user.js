@@ -183,12 +183,20 @@ VBItem.prototype.buildHTML = function() {
 };
 
 VBItem.prototype.buildMarkdown = function() {
-	var h2 = "## " + $("<div>").append($(this.key)).html();
-	var tmp = [h2];
-	var audio = VBMarkdown.audio(this.pronunciation());
+	let h2 = "## " + $("<div>").append($(this.key)).html();
+	let tmp = [h2];
+	let audio = VBMarkdown.audio(this.pronunciation());
 	if (audio != undefined) {
 		tmp.push(audio);
 	}
+  $.map(this.illustrations(), function(v, k) {
+    tmp.push(
+      [k,
+      "\n> ",
+			VBMarkdown.markdown(v),
+			"\n"].join("")
+    );
+  });
 	$.map(this.examples(), function(v, k) {
 		tmp.push(
 			["### ",
