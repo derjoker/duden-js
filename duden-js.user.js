@@ -254,18 +254,18 @@ var VBuilder = {
     Markdown: 3
   },
 
-	buildHTML: function() {
-		return local.getKeys().map(function(k) {
+	buildHTML: function(keys) {
+		return keys.map(function(k) {
 			var vbItem = new VBItem(k);
 			// console.log("output[html]", vbItem.buildHTML());
 			return vbItem.buildHTML();
 		}).join("");
 	},
 
-  buildCSV: function() {
+  buildCSV: function(keys) {
     var csv = new csvWriter();
     var tmp = [];
-    local.getKeys().map(function(k) {
+    keys.map(function(k) {
       var vbItem = new VBItem(k);
       tmp = tmp.concat(vbItem.toArray());
     });
@@ -273,26 +273,27 @@ var VBuilder = {
     return csv.arrayToCSV(tmp);
   },
 
-	buildMarkdown: function() {
-		return local.getKeys().map(function(k) {
+	buildMarkdown: function(keys) {
+		return keys.map(function(k) {
 			var vbItem = new VBItem(k);
 			// console.log("output[html]", vbItem.buildHTML());
 			return vbItem.buildMarkdown();
 		}).join("\n\n");
 	},
 
-	save: function(format) {
+	save: function(format, keys) {
+    let k = keys ? keys : local.getKeys();
     var encodedUri;
 
     switch (format) {
       case this.Format.HTML:
-        encodedUri = "data:text/html;charset=utf-8," + encodeURIComponent(this.buildHTML());
+        encodedUri = "data:text/html;charset=utf-8," + encodeURIComponent(this.buildHTML(k));
         break;
       case this.Format.CSV:
-        encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(this.buildCSV());
+        encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(this.buildCSV(k));
         break;
       case this.Format.Markdown:
-        encodedUri = "data:text/plain;charset=utf-8," + encodeURIComponent(this.buildMarkdown());
+        encodedUri = "data:text/plain;charset=utf-8," + encodeURIComponent(this.buildMarkdown(k));
         break;
       default:
         encodedUri = "data:text/plain;charset=utf-8,error: unknown format!"
@@ -377,9 +378,7 @@ $(document).ready(function(){
 
 	var button_save = $("<button>").text("Save").click(function() {
 		// alert("save");
-		// VBuilder.save(VBuilder.Format.Markdown);
-    var encodedUri = "data:text/plain;charset=utf-8," + encodeURIComponent(currentItem.buildMarkdown());
-    window.open(encodedUri);
+		VBuilder.save(VBuilder.Format.Markdown, [c_rs]);
 	});
 	anki.append(button_save);
 
