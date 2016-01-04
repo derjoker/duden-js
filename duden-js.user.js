@@ -69,32 +69,42 @@ var local = {
 // local.getKeys();
 // console.log('local', local);
 
-var carts = {
+var cart = {
   get: function() {
     // return [] ? "[] is true" : "[] is not true";
-    return local.getItem("vbcarts") ? local.getItem("vbcarts") : [];
+    return local.getItem("vbcart") ? local.getItem("vbcart") : [];
   },
 
   add: function(word) {
-    let words = carts.get();
+    let words = cart.get();
     // unique
     if (words.indexOf(word) < 0) {
       words.push(word);
       // console.log("words", words);
-      local.setItem("vbcarts", words);
+      local.setItem("vbcart", words);
+    }
+  },
+
+  remove: function(word) {
+    let words = cart.get();
+    let i = words.indexOf(word);
+    if (i >= 0) {
+      words.splice(i, 1);
+      // console.log("words", words);
+      local.setItem("vbcart", words);
     }
   },
 
   empty: function() {
-    local.removeItem("vbcarts");
+    local.removeItem("vbcart");
   }
 }
-// console.log("carts", carts.get());
-// carts.add("test1");
-// carts.add("test2");
-// carts.add("test3");
-// console.log("carts", carts.get());
-// carts.empty();
+// console.log("cart", cart.get());
+// cart.add("test1");
+// cart.add("test2");
+// cart.add("test3");
+// console.log("cart", cart.get());
+// cart.empty();
 
 function VBItem(key) {
 	this.key = key;
@@ -416,7 +426,24 @@ $(document).ready(function(){
 	Events
 	*/
 
-	// Aussprache
+	// Add to Cart
+  $("h1").after($("<button>").text(function(index) {
+    if (cart.get().indexOf(c_rs) < 0) {
+      return "Add to Cart";
+    }
+    return "Remove from Cart";
+  }).click(function() {
+    if ($(this).text() == "Add to Cart") {
+      cart.add(c_rs);
+			$(this).text("Remove from Cart");
+		}
+		else {
+      cart.remove(c_rs);
+			$(this).text("Add to Cart");
+		}
+  }));
+
+  // Aussprache
 	$("a.audio").click(function() {
 		// alert($(this).parent().html());
 		currentItem.pronunciation($(this).parent().html());
