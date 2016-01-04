@@ -19,7 +19,8 @@ var local = {
 
 	getItem: function(k) {
 		// console.log('k[para]', k);
-		return JSON.parse(this.data.getItem(k) || '{}');
+    let item = this.data.getItem(k);
+		return item ? JSON.parse(item) : undefined;
 		// return JSON.parse(this.data.getItem(k));
 	},
 
@@ -68,9 +69,14 @@ var local = {
 // local.getKeys();
 // console.log('local', local);
 
+var carts = {
+  carts: local.getItem("vbcarts") ? local.getItem("vbcarts") : []
+}
+console.log("carts", carts.carts);
+
 function VBItem(key) {
 	this.key = key;
-	this.sections = local.getItem(key);
+	this.sections = local.getItem(key) ? local.getItem(key) : {};
 };
 
 VBItem.prototype.index = {
