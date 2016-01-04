@@ -360,6 +360,9 @@ $(document).ready(function(){
   all.append($("<button>").text("Save All").click(function() {
     // alert("Save All!");
     VBuilder.save(VBuilder.Format.CSV);
+  })).append($("<button>").text("Save Cart").click(function() {
+    VBuilder.save(VBuilder.Format.Markdown, cart.get());
+    cart.empty();
   })).append($("<button>").text("Clear All").click(function() {
     local.clear();
     currentItem.clear();
