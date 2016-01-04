@@ -70,9 +70,31 @@ var local = {
 // console.log('local', local);
 
 var carts = {
-  carts: local.getItem("vbcarts") ? local.getItem("vbcarts") : []
+  get: function() {
+    // return [] ? "[] is true" : "[] is not true";
+    return local.getItem("vbcarts") ? local.getItem("vbcarts") : [];
+  },
+
+  add: function(word) {
+    let words = carts.get();
+    // unique
+    if (words.indexOf(word) < 0) {
+      words.push(word);
+      // console.log("words", words);
+      local.setItem("vbcarts", words);
+    }
+  },
+
+  empty: function() {
+    local.removeItem("vbcarts");
+  }
 }
-console.log("carts", carts.carts);
+// console.log("carts", carts.get());
+// carts.add("test1");
+// carts.add("test2");
+// carts.add("test3");
+// console.log("carts", carts.get());
+// carts.empty();
 
 function VBItem(key) {
 	this.key = key;
