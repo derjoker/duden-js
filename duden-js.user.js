@@ -76,7 +76,8 @@ var cart = {
   },
 
   add: function(word) {
-    let words = cart.get();
+    // console.log("this pointer: ", this);
+    let words = this.get();
     // unique
     if (words.indexOf(word) < 0) {
       words.push(word);
