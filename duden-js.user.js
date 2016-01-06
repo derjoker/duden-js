@@ -358,6 +358,9 @@ $(document).ready(function(){
 							"</div>"].join("");
 	var currentItem = new VBItem(c_rs);
 	// console.log('currentItem', currentItem);
+  // keys of examples for current item
+  var cie_keys = Object.keys(currentItem.examples());
+  // console.log("keys", cie_keys);
 
 	/*
 	View
@@ -375,7 +378,7 @@ $(document).ready(function(){
   })).append($("<button>").text("Clear All").click(function() {
     local.clear();
     currentItem.clear();
-    ankicontent.update();
+    VBView.update();
   }));
 
   // currentItem@sidebar
@@ -389,7 +392,7 @@ $(document).ready(function(){
 	var button_clear = $("<button>").text("Clear").click(function(){
 		// local.clear();
 		currentItem.clear();
-		ankicontent.update();
+    VBView.update();
 	});
 	anki.append(button_clear);
 
@@ -432,7 +435,22 @@ $(document).ready(function(){
 
 	anki.append(ankicontent.anker);
 	// display of local data
-	ankicontent.update();
+	// ankicontent.update();
+
+  var VBView = {
+    update: function() {
+      $("button.vb_toggle").each(function() {
+        if (cie_keys.indexOf($(this).data("key")) < 0) {
+          $(this).text("Add");
+        }
+        else {
+          $(this).text("Remove");
+        }
+      });
+
+      ankicontent.update();
+    }
+  };
 
 	/*
 	Events
@@ -491,9 +509,6 @@ $(document).ready(function(){
 	h3_filtered.siblings("span").parent()
 		.append('<button class="vb_toggle"></button>');
 
-  // keys of examples for current item
-  var cie_keys = Object.keys(currentItem.examples());
-  // console.log("keys", cie_keys);
   $("button.vb_toggle").each(function() {
     var content = $(this).parent().clone();
 		content.children("button").remove();
@@ -528,14 +543,9 @@ $(document).ready(function(){
     // console.log("value", value.html());
     $(this).data({"key": key.html(), "value": value.html()});
     // console.log("data", $(this).data());
-
-    if (cie_keys.indexOf(key.html()) < 0) {
-      $(this).text("Add");
-    }
-    else {
-      $(this).text("Remove");
-    }
   });
+
+  VBView.update();
 
 	$("button.vb_toggle").click(function(){
 		if ($(this).text() == "Add") {
