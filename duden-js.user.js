@@ -486,13 +486,16 @@ $(document).ready(function(){
 	});
 	// multiple
 	h3_filtered.siblings("ul").children("li")
-		.append('<button class="vb_toggle">Add</button>');
+		.append('<button class="vb_toggle"></button>');
 	// single
 	h3_filtered.siblings("span").parent()
-		.append('<button class="vb_toggle">Add</button>');
+		.append('<button class="vb_toggle"></button>');
 
-	$("button.vb_toggle").click(function(){
-		var content = $(this).parent().clone();
+  // keys of examples for current item
+  var cie_keys = Object.keys(currentItem.examples());
+  // console.log("keys", cie_keys);
+  $("button.vb_toggle").each(function() {
+    var content = $(this).parent().clone();
 		content.children("button").remove();
 		// if there is ... (single)
 		content.children("h3").remove();
@@ -521,19 +524,28 @@ $(document).ready(function(){
 								.append($("<span>").text(word + " : "))
 								.append($("<span>").html(bedeutung.html()));
 		}
-		console.log("key", key);
-		console.log("value", value);
+    // console.log("key", key.html());
+    // console.log("value", value.html());
+    $(this).data({"key": key.html(), "value": value.html()});
+    // console.log("data", $(this).data());
 
+    if (cie_keys.indexOf(key.html()) < 0) {
+      $(this).text("Add");
+    }
+    else {
+      $(this).text("Remove");
+    }
+  });
+
+	$("button.vb_toggle").click(function(){
 		if ($(this).text() == "Add") {
-			currentItem.addExample(key.html(), value.html());
+			currentItem.addExample($(this).data("key"), $(this).data("value"));
 			$(this).text("Remove");
 		}
 		else {
-			currentItem.removeExample(key.html());
+			currentItem.removeExample($(this).data("key"));
 			$(this).text("Add");
-			// alert("Removed");
 		}
-		// alert(key.html());
 
 		ankicontent.update();
 	});
