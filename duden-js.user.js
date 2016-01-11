@@ -191,8 +191,20 @@ VBItem.prototype.buildMarkdown = function() {
 		tmp.push(audio);
 	}
   $.map(this.illustrations(), function(v, k) {
+    // console.log($(k).find("a").attr("href"));
+    var fig = $(k);
+    var alt = fig.find("img").attr("alt");
+    // console.log(alt);
+    var title = fig.find("img").attr("title");
+    // console.log(title);
+    var src = fig.find("a").attr("href");
+    // console.log(src);
+    fig.find("a").replaceWith($("<img>").attr({
+      alt: alt, title: title, src: src
+    }));
+    var f = $("<div>").append(fig).html();
     tmp.push(
-      [k,
+      [f,
       "\n> ",
 			VBMarkdown.markdown(v),
 			"\n"].join("")
