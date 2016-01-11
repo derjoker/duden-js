@@ -184,7 +184,7 @@ VBItem.prototype.buildHTML = function() {
 };
 
 VBItem.prototype.buildMarkdown = function() {
-	let h2 = "## " + $("<div>").append($(this.key)).html();
+  var h2 = "## " + $(this.key).text();
 	let tmp = [h2];
 	let audio = VBMarkdown.audio(this.pronunciation());
 	if (audio != undefined) {
