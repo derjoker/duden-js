@@ -10,10 +10,9 @@ Vorwort
 
 ## Aus­ei­n­an­der­set­zung, De­bat­te, Dis­kus­si­on, Streit
 
-    商讨
-    争论
-    冲突
-
+    研究，探讨: Aus­ei­n­an­der­set­zung
+    争论: Aus­ei­n­an­der­set­zung, De­bat­te, Dis­kus­si­on
+    冲突: Aus­ei­n­an­der­set­zung, Streit
 
 ## Aus­ei­n­an­der­set­zung, die
 Betonung: <em>Auseinạndersetzung</em> <audio controls="controls" src="http://www.duden.de/_media_/audio/ID4107174_229847920.mp3"></audio>
@@ -28,7 +27,7 @@ Betonung: <em>Auseinạndersetzung</em> <audio controls="controls" src="http:/
 
 
 ## Streit, der
-<figure><a href="http://www.duden.de/_media_/full/S/Streit-201100280799.jpg"><img src="http://www.duden.de/_media_/small/S/Streit-201100280799.jpg" title="Streit - Streit zwischen zwei Jugendlichen" alt="Streit - Streit zwischen zwei Jugendlichen"></a><figcaption>Streit zwischen zwei Jugendlichen - ©&nbsp;MEV Verlag, Augsburg</figcaption></figure>
+<figure><img src="http://www.duden.de/_media_/full/S/Streit-201100280799.jpg" title="Streit - Streit zwischen zwei Jugendlichen" alt="Streit - Streit zwischen zwei Jugendlichen"><figcaption>Streit zwischen zwei Jugendlichen - ©&nbsp;MEV Verlag, Augsburg</figcaption></figure>
 > Streit, der :  heftiges Sichauseinandersetzen, Zanken [mit einem persönlichen Gegner] in oft erregten Erörterungen, hitzigen Wortwechseln, oft auch in Handgreiflichkeiten
 
 ### ein wissenschaftlicher, gelehrter Streit
