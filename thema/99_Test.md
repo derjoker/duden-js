@@ -114,31 +114,22 @@ Betonung: <em>Diskussi<u>o</u>n</em> <audio controls="controls" src="http://ww
 <figure><img src="http://www.duden.de/_media_/full/S/Streit-201100280799.jpg" title="Streit - Streit zwischen zwei Jugendlichen" alt="Streit - Streit zwischen zwei Jugendlichen"><figcaption>Streit zwischen zwei Jugendlichen - ©&nbsp;MEV Verlag, Augsburg</figcaption></figure>
 > Streit, der :  heftiges Sichauseinandersetzen, Zanken [mit einem persönlichen Gegner] in oft erregten Erörterungen, hitzigen Wortwechseln, oft auch in Handgreiflichkeiten
 
-### ein wissenschaftlicher, gelehrter Streit
+### ein wissenschaftlicher, gelehrter Streit (研究性的，学术性的)
 > Streit, der :  heftiges Sichauseinandersetzen, Zanken [mit einem persönlichen Gegner] in oft erregten Erörterungen, hitzigen Wortwechseln, oft auch in Handgreiflichkeiten
 
-### ein Streit über Form und Inhalt
+### ein Streit ***über*** Form und Inhalt
 > Streit, der :  heftiges Sichauseinandersetzen, Zanken [mit einem persönlichen Gegner] in oft erregten Erörterungen, hitzigen Wortwechseln, oft auch in Handgreiflichkeiten
 
-### ein Streit unter den Kindern, zwischen zwei Parteien
+### ein Streit ***unter*** den Kindern, ***zwischen*** zwei Parteien
 > Streit, der :  heftiges Sichauseinandersetzen, Zanken [mit einem persönlichen Gegner] in oft erregten Erörterungen, hitzigen Wortwechseln, oft auch in Handgreiflichkeiten
 
 ### ein Streit bricht aus, entbrennt, entsteht
-> Streit, der :  heftiges Sichauseinandersetzen, Zanken [mit einem persönlichen Gegner] in oft erregten Erörterungen, hitzigen Wortwechseln, oft auch in Handgreiflichkeiten
-
-### die beiden haben, bekommen oft Streit [miteinander]
-> Streit, der :  heftiges Sichauseinandersetzen, Zanken [mit einem persönlichen Gegner] in oft erregten Erörterungen, hitzigen Wortwechseln, oft auch in Handgreiflichkeiten
-
-### es gab einen heftigen Streit
 > Streit, der :  heftiges Sichauseinandersetzen, Zanken [mit einem persönlichen Gegner] in oft erregten Erörterungen, hitzigen Wortwechseln, oft auch in Handgreiflichkeiten
 
 ### einen Streit anzetteln, entfachen, anfangen, austragen
 > Streit, der :  heftiges Sichauseinandersetzen, Zanken [mit einem persönlichen Gegner] in oft erregten Erörterungen, hitzigen Wortwechseln, oft auch in Handgreiflichkeiten
 
 ### den Streit beilegen, beenden, begraben
-> Streit, der :  heftiges Sichauseinandersetzen, Zanken [mit einem persönlichen Gegner] in oft erregten Erörterungen, hitzigen Wortwechseln, oft auch in Handgreiflichkeiten
-
-### sie sind in Streit geraten, liegen im Streit, sind im Streit auseinandergegangen
 > Streit, der :  heftiges Sichauseinandersetzen, Zanken [mit einem persönlichen Gegner] in oft erregten Erörterungen, hitzigen Wortwechseln, oft auch in Handgreiflichkeiten
 
 ### zum Streit rüsten
