@@ -6,14 +6,17 @@ build vocabulary from [duden.de](http://www.duden.de/)
 * Firefox
 * Addon: Greasemonkey
 * duden-js.user.js
+* [Addon: gooreplacer](https://addons.mozilla.org/zh-CN/firefox/addon/gooreplacer/) if necessary
 
 ## Vocabulary Builder
 
 * Lookup
 * Add
 * Save
-* Clear
+  * Save This (as Markdown)
+  * Save All (as CSV)
+* Clear All
 
 ## Anki
 
-* Import (update existing notes when first field matches)
+* Import CSV (ignore lines when first field matches existing node)
