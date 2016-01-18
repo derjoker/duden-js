@@ -340,24 +340,6 @@ var VBuilder = {
 $(document).ready(function(){
 
 	/*
-	Double click to lookup & open
-	*/
-	$("body").dblclick(function(){
-		var selection = window.getSelection() ||
-						document.getSelection() ||
-						document.selection.createRange();
-		// alert(selection);
-		var link = "http://www.duden.de/suchen/dudenonline/" + selection;
-		// [to-do: improve] wait ... tries to open twice
-		$.ajax({
-			url: link,
-			success: function(){
-				window.open(link);
-			}
-		});
-	});
-
-	/*
 	Data
 	*/
 	// <h1> Wort
