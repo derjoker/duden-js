@@ -369,7 +369,7 @@ $(document).ready(function(){
   })).append($("<button>").text("Save Cart").click(function() {
     VBuilder.save(VBuilder.Format.Markdown, cart.get());
     cart.empty();
-  })).append($("<button>").text("Clear All").click(function() {
+  })).append($("<button style='float: right'>").text("Clear All").click(function() {
     local.clear();
     currentItem.clear();
     VBView.update();
