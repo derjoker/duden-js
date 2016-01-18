@@ -4,7 +4,7 @@
 // @description scrap items as anki card
 // @include     http://www.duden.de/rechtschreibung/*
 // @require	http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.js
-// @version     1.1.1
+// @version     1.2.0
 // @grant       none
 // ==/UserScript==
 
