@@ -1,0 +1,5 @@
+ Abkürzung
+ ==========
+
+ ggf.
+ gegebenenfalls
