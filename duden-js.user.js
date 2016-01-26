@@ -107,6 +107,76 @@ var cart = {
 // console.log("cart", cart.get());
 // cart.empty();
 
+var rsItem = function(rs) {
+
+  // index: examples, pronunciation, illustrations
+
+  var obj = local.getItem(rs) || {};
+
+  return {
+
+    save: function() {
+      // console.log(rs, obj);
+      local.setItem(rs, obj);
+    },
+
+    clear: function() {
+      local.removeItem(rs);
+      obj = {};
+    },
+
+    get: function(section, key) {
+      // case: pronunciation
+      if (section === "pronunciation") return obj[section];
+      // case: examples, illustrations
+      if (["examples", "illustrations"].indexOf(section) !== -1) {
+        var sectionObj = obj[section] = obj[section] || {};
+        if (key === undefined) return sectionObj;
+        return sectionObj[key];
+      }
+    },
+
+    add: function(section, a, b) {
+      var sectionObj = this.get(section);
+
+      if (typeof sectionObj === "object") { // examples, illustrations
+        if (typeof a === "string") {
+          // a, b (string)
+          if (typeof b === "string") sectionObj[a] = b;
+        } else { // a (object)
+          for (var k in a) sectionObj[k] = a[k];
+        }
+      } else { // pronunciation: a (string)
+        if (typeof a === "string") obj[section] = a;
+      }
+
+      this.save();
+    },
+
+    remove: function(section, key) {
+      if (obj[section] !== undefined) {
+        if (key === undefined) delete obj[section];
+        else delete obj[section][key];
+        this.save();
+      }
+    }
+  };
+};
+
+// [UnitTest] rsItem
+var rs = "[UnitTest] rsItem";
+var rsitem = rsItem(rs);
+console.log(rsitem);
+rsitem.add("pronunciation", "pron");
+rsitem.add("examples", {"e": "m", "x": "a"});
+rsitem.add("illustrations", "i", "l");
+console.log(rsitem.get("examples"));
+rsitem.remove("examples", "x");
+console.log(rsitem.get("pronunciation"));
+console.log(rsitem.get("examples"));
+console.log(rsitem.get("illustrations"));
+// rsitem.clear();
+
 function VBItem(key) {
 	this.key = key;
 	this.sections = local.getItem(key) ? local.getItem(key) : {};
@@ -252,7 +322,7 @@ var VBMarkdown = {
 	},
 
 	audio: function(h) {
-		if (h == undefined) {
+		if (h === undefined) {
 			return undefined;
 		}
 		var tmp = $("<div>").html(h);
