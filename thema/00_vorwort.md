@@ -17,9 +17,11 @@ Vorwort
 
 ## Aus­ei­n­an­der­set­zung, De­bat­te, Dis­kus­si­on, Streit
 
-    研究，探讨: Aus­ei­n­an­der­set­zung
-    争论: Aus­ei­n­an­der­set­zung, De­bat­te, Dis­kus­si­on
-    冲突: Aus­ei­n­an­der­set­zung, Streit
+```
+研究，探讨: Aus­ei­n­an­der­set­zung
+争论: Aus­ei­n­an­der­set­zung, De­bat­te, Dis­kus­si­on
+冲突: Aus­ei­n­an­der­set­zung, Streit
+```
 
 ## Aus­ei­n­an­der­set­zung, die
 Betonung: <em>Auseinạndersetzung</em> <audio controls="controls" src="http://www.duden.de/_media_/audio/ID4107174_229847920.mp3"></audio>
