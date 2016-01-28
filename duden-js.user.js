@@ -110,6 +110,21 @@ var cart = {
 String.prototype.markdown = function() {
   var ret = $("<div>").html(this);
 
+  // text
+  ["span", "li"].forEach(function (item, index, array) {
+    ret.find(item).replaceWith(function() {
+      return $(this).html();
+    });
+  });
+
+  // emphasis
+  ret.find("em").replaceWith(function() {
+    return ["*", $(this).html(), "*"].join("");
+  }); // italic
+  ret.find("strong").replaceWith(function() {
+    return ["**", $(this).html(), "**"].join("");
+  }); // bold
+
   // audio: <a class="audio" ...
   ret.find("a.audio").replaceWith(function() {
     return ["<audio controls='controls' src='",
@@ -121,7 +136,7 @@ String.prototype.markdown = function() {
     var alt = $(this).find("img").attr("alt");
     var title = $(this).find("img").attr("title");
     var src = $(this).find("a").attr("href");
-    return ["![", title, "](", src, " ", alt, ")"].join("");
+    return ["![", title, "](", src, " \"", alt, "\")"].join("");
   })
   // normal link: <a>
   ret.find("a").replaceWith(function() {
@@ -428,9 +443,9 @@ var VBuilder = {
 
 	buildMarkdown: function(keys) {
 		return keys.map(function(k) {
-			var vbItem = new VBItem(k);
+			var vbItem = rsItem(k);
 			// console.log("output[html]", vbItem.buildHTML());
-			return vbItem.buildMarkdown();
+			return vbItem.markdown();
 		}).join("\n\n");
 	},
 
