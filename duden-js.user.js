@@ -132,10 +132,10 @@ String.prototype.markdown = function() {
   return ret.html();
 };
 
-var test = '<figure><a href="figre href"><img alt="alt" title="title"></a></figure>' +
-  '<a class="audio" href="audio href">audio</a>' +
-  '<a href="a href">link<gehoben>link</a>';
-console.log(test.markdown());
+// var test = '<figure><a href="figre href"><img alt="alt" title="title"></a></figure>' +
+//   '<a class="audio" href="audio href">audio</a>' +
+//   '<a href="a href">link<gehoben>link</a>';
+// console.log(test.markdown());
 
 var rsItem = function(rs) {
 
@@ -216,8 +216,8 @@ var rsItem = function(rs) {
 };
 
 // [UnitTest] rsItem
-var rs = "<div name='deutsch'>deutsch</div>";
-var rsitem = rsItem(rs);
+// var rs = "<div name='deutsch'>deutsch</div>";
+// var rsitem = rsItem(rs);
 // console.log(rsitem);
 // rsitem.add("pronunciation", "pron");
 // rsitem.add("examples", {"e": "m", "x": "a"});
@@ -472,10 +472,10 @@ $(document).ready(function(){
 							"'>",
 							word,
 							"</div>"].join("");
-	var currentItem = new VBItem(c_rs);
+	var currentItem = rsItem(c_rs);
 	// console.log('currentItem', currentItem);
   // keys of examples for current item
-  var cie_keys = Object.keys(currentItem.examples());
+  var cie_keys = Object.keys(currentItem.get("examples"));
   // console.log("keys", cie_keys);
 
 	/*
@@ -543,8 +543,7 @@ $(document).ready(function(){
 		},
 
 		update: function() {
-			// this.append(local.getAllItems());
-			this.append(currentItem.examples());
+			this.append(currentItem.get("examples"));
 		}
 	};
 	// console.log('ankicontent', ankicontent);
@@ -589,10 +588,11 @@ $(document).ready(function(){
 		}
   }));
 
-  // Aussprache
+  // Aussprache: <div class="entry">
 	$("a.audio").click(function() {
-		// alert($(this).parent().html());
-		currentItem.pronunciation($(this).parent().html());
+		// console.log($(this).parentsUntil("div.entry"));
+		currentItem.add("pronunciation",
+      $(this).parentsUntil("div.entry").parent().html());
 	});
 
 	// Bilder
@@ -609,7 +609,7 @@ $(document).ready(function(){
                       .html();
 		// console.log("figure", figure);
 		// console.log("definition", definition);
-    currentItem.addIllustration(figure, definition)
+    currentItem.add("illustrations", figure, definition)
 	});
 
 	// Bedeutungen, Beispiele und Wendungen
@@ -665,11 +665,11 @@ $(document).ready(function(){
 
 	$("button.vb_toggle").click(function(){
 		if ($(this).text() == "Add") {
-			currentItem.addExample($(this).data("key"), $(this).data("value"));
+			currentItem.add("examples", $(this).data("key"), $(this).data("value"));
 			$(this).text("Remove");
 		}
 		else {
-			currentItem.removeExample($(this).data("key"));
+			currentItem.remove("examples", $(this).data("key"));
 			$(this).text("Add");
 		}
 
