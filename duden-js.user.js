@@ -107,6 +107,36 @@ var cart = {
 // console.log("cart", cart.get());
 // cart.empty();
 
+String.prototype.markdown = function() {
+  var ret = $("<div>").html(this);
+
+  // audio: <a class="audio" ...
+  ret.find("a.audio").replaceWith(function() {
+    return ["<audio controls='controls' src='",
+            $(this).attr("href"),
+            "'></audio>"].join("");
+  });
+  // figure: <figure><a><img></a></figure>
+  ret.find("figure").replaceWith(function() {
+    var alt = $(this).find("img").attr("alt");
+    var title = $(this).find("img").attr("title");
+    var src = $(this).find("a").attr("href");
+    return ["![", title, "](", src, " ", alt, ")"].join("");
+  })
+  // normal link: <a>
+  ret.find("a").replaceWith(function() {
+    return ["[", $(this).text(), "]", "(", $(this).attr("href"), ")"].join("");
+  });
+
+  // escape special, like <>
+  return ret.html();
+};
+
+var test = '<figure><a href="figre href"><img alt="alt" title="title"></a></figure>' +
+  '<a class="audio" href="audio href">audio</a>' +
+  '<a href="a href">link<gehoben>link</a>';
+console.log(test.markdown());
+
 var rsItem = function(rs) {
 
   // index: examples, pronunciation, illustrations
@@ -159,22 +189,44 @@ var rsItem = function(rs) {
         else delete obj[section][key];
         this.save();
       }
+    },
+
+    markdown: function() {
+      var h2 = "## " + $(rs).text();
+    	var ret = [h2];
+
+    	var audio = this.get("pronunciation");
+    	if (audio !== undefined) ret.push(audio.markdown());
+
+      $.map(this.get("illustrations"), function(v, k) {
+        ret.push(
+          [k.markdown(), "\n> ", v.markdown(), "\n"].join("")
+        );
+      });
+
+    	$.map(this.get("examples"), function(v, k) {
+    		ret.push(
+    			["### ", k.markdown(), "\n> ", v.markdown(), "\n"].join("")
+    		);
+    	});
+
+    	return ret.join("\n");
     }
   };
 };
 
 // [UnitTest] rsItem
-var rs = "[UnitTest] rsItem";
+var rs = "<div name='deutsch'>deutsch</div>";
 var rsitem = rsItem(rs);
-console.log(rsitem);
-rsitem.add("pronunciation", "pron");
-rsitem.add("examples", {"e": "m", "x": "a"});
-rsitem.add("illustrations", "i", "l");
-console.log(rsitem.get("examples"));
-rsitem.remove("examples", "x");
-console.log(rsitem.get("pronunciation"));
-console.log(rsitem.get("examples"));
-console.log(rsitem.get("illustrations"));
+// console.log(rsitem);
+// rsitem.add("pronunciation", "pron");
+// rsitem.add("examples", {"e": "m", "x": "a"});
+// rsitem.add("illustrations", "i", "l");
+// console.log(rsitem.get("examples"));
+// rsitem.remove("examples", "x");
+// console.log(rsitem.get("pronunciation"));
+// console.log(rsitem.get("examples"));
+// console.log(rsitem.get("illustrations"));
 // rsitem.clear();
 
 function VBItem(key) {
