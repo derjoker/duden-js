@@ -226,6 +226,18 @@ var rsItem = function(rs) {
     	});
 
     	return ret.join("\n");
+    },
+
+    html: function() {
+      var ret = $(rs);
+    	$.map(this.get("examples"), function(v, k) {
+    		ret.append(
+    			$("<div class='vb_card'>")
+    				.append($("<div class='front'>").html(k))
+    				.append($("<div class='back'>").html(v))
+    		);
+    	});
+    	return $("<div>").append(ret).html();
     }
   };
 };
@@ -244,174 +256,6 @@ var rsItem = function(rs) {
 // console.log(rsitem.get("illustrations"));
 // rsitem.clear();
 
-function VBItem(key) {
-	this.key = key;
-	this.sections = local.getItem(key) ? local.getItem(key) : {};
-};
-
-VBItem.prototype.index = {
-	examples: "examples",
-	pronunciation: "pronunciation",
-	illustrations: "illustrations"
-};
-
-// save after any change of this.sections
-VBItem.prototype.save = function() {
-	local.setItem(this.key, this.sections);
-};
-
-VBItem.prototype.clear = function() {
-	this.sections = {};
-	local.removeItem(this.key);
-};
-
-VBItem.prototype.examples = function() {
-	return this.sections[this.index.examples] || {};
-};
-
-VBItem.prototype.addExample = function(example, definition) {
-	this.sections[this.index.examples] = this.examples();
-	this.sections[this.index.examples][example] = definition;
-	this.save();
-};
-
-VBItem.prototype.removeExample = function(example) {
-	delete this.sections[this.index.examples][example];
-	this.save();
-};
-
-VBItem.prototype.pronunciation = function(value) {
-	if (value === undefined) {
-		return this.sections[this.index.pronunciation];
-	}
-	else {
-		this.sections[this.index.pronunciation] = value;
-		this.save();
-	}
-};
-
-VBItem.prototype.illustrations = function() {
-	return this.sections[this.index.illustrations] || {};
-};
-
-VBItem.prototype.addIllustration = function(figure, definition) {
-	this.sections[this.index.illustrations] = this.illustrations();
-	this.sections[this.index.illustrations][figure] = definition;
-	this.save();
-};
-
-VBItem.prototype.toArray = function() {
-  var ret = [];
-  $.map(this.examples(), function(v, k) {
-    ret.push([k, v]);
-  });
-  return ret;
-};
-
-VBItem.prototype.buildHTML = function() {
-	var ret = $(this.key);
-	$.map(this.examples(), function(v, k) {
-		ret.append(
-			$("<div class='vb_card'>")
-				.append($("<div class='front'>").html(k))
-				.append($("<div class='back'>").html(v))
-		);
-	});
-	return $("<div>").append(ret).html();
-};
-
-VBItem.prototype.buildMarkdown = function() {
-  var h2 = "## " + $(this.key).text();
-	let tmp = [h2];
-	let audio = VBMarkdown.audio(this.pronunciation());
-	if (audio != undefined) {
-		tmp.push(audio);
-	}
-  $.map(this.illustrations(), function(v, k) {
-    // console.log($(k).find("a").attr("href"));
-    var fig = $(k);
-    var alt = fig.find("img").attr("alt");
-    // console.log(alt);
-    var title = fig.find("img").attr("title");
-    // console.log(title);
-    var src = fig.find("a").attr("href");
-    // console.log(src);
-    fig.find("a").replaceWith($("<img>").attr({
-      alt: alt, title: title, src: src
-    }));
-    var f = $("<div>").append(fig).html();
-    tmp.push(
-      [f,
-      "\n> ",
-			VBMarkdown.markdown(v),
-			"\n"].join("")
-    );
-  });
-	$.map(this.examples(), function(v, k) {
-		tmp.push(
-			["### ",
-			VBMarkdown.markdown(k),
-			"\n> ",
-			VBMarkdown.markdown(v),
-			"\n"].join("")
-		);
-	});
-	return tmp.join("\n");
-};
-
-// UnitTest
-// var vbItemTest = new VBItem("<div name='test'></div>");
-// vbItemTest.addExample(1, 1);
-// console.log("Beispiele", vbItemTest.examples());
-// vbItemTest.pronunciation("pronunciation");
-// console.log("Aussprache", vbItemTest.pronunciation());
-// console.log("Bilder", vbItemTest.illustrations());
-
-/*
-Output Format
-*/
-var VBMarkdown = {
-	// html -> html (with markdown link)
-	link: function(h) {
-		var tmp = $("<div>").html(h);
-		tmp.find("a").replaceWith(function() {
-			return ["[", $(this).text(), "]", "(", $(this).attr("href"), ")"].join("");
-		});
-		return tmp;
-	},
-
-	// html -> text
-	text: function(h) {
-		// escape special, like <>
-		return $("<div>").text(
-			$("<div>").html(h).text()
-		).html();
-	},
-
-	audio: function(h) {
-		if (h === undefined) {
-			return undefined;
-		}
-		var tmp = $("<div>").html(h);
-		tmp.find("a.audio").replaceWith(function() {
-			// alert($(this).attr("href"));
-			return ["<audio controls='controls' src='",
-							$(this).attr("href"),
-							"'></audio>"].join("");
-		});
-		return tmp.html();
-	},
-
-	markdown: function(h) {
-		// console.log(this.text(h));
-		return this.text(this.link(h));
-	}
-};
-
-var VBHTML = {
-	html: function() {}
-};
-
 /*
 Vocabulary Builder
 */
@@ -424,9 +268,9 @@ var VBuilder = {
 
 	buildHTML: function(keys) {
 		return keys.map(function(k) {
-			var vbItem = new VBItem(k);
+			var vbItem = rsItem(k);
 			// console.log("output[html]", vbItem.buildHTML());
-			return vbItem.buildHTML();
+			return vbItem.html();
 		}).join("");
 	},
 
@@ -434,10 +278,12 @@ var VBuilder = {
     var csv = new csvWriter();
     var tmp = [];
     keys.map(function(k) {
-      var vbItem = new VBItem(k);
-      tmp = tmp.concat(vbItem.toArray());
+      var vbItem = rsItem(k);
+      $.map(vbItem.get("examples"), function(v, k) {
+        tmp.push([k, v]);
+      });
     });
-    // console.log(tmp);
+    console.log(tmp);
     return csv.arrayToCSV(tmp);
   },
 
