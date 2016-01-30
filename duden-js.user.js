@@ -4,7 +4,7 @@
 // @description scrap items as anki card
 // @include     http://www.duden.de/rechtschreibung/*
 // @require	http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.js
-// @version     1.2.0
+// @version     1.2.1
 // @grant       none
 // ==/UserScript==
 
@@ -18,10 +18,8 @@ var local = {
 	data: window.localStorage,
 
 	getItem: function(k) {
-		// console.log('k[para]', k);
-    let item = this.data.getItem(k);
+    var item = this.data.getItem(k);
 		return item ? JSON.parse(item) : undefined;
-		// return JSON.parse(this.data.getItem(k));
 	},
 
 	getKeys: function() {
@@ -32,7 +30,6 @@ var local = {
 				keys.push(key);
 			}
 		}
-		// console.log("keys", keys);
 		return keys;
 	},
 
@@ -41,11 +38,8 @@ var local = {
 
 		for (var index = 0; index < this.data.length; index++) {
 			var key = this.data.key(index);
-			// console.log(key);
 			if (key.indexOf('div name') == 1) {
-				// console.log('key', key);
 				$.map(this.getItem(key), function(v, k) {
-					// console.log(k, v);
 					m.set(k, v);
 				});
 			}
@@ -66,8 +60,6 @@ var local = {
 		this.data.clear();
 	}
 };
-// local.getKeys();
-// console.log('local', local);
 
 var Section = {
   pronunciation: "pronunciation",
@@ -89,7 +81,7 @@ var cart = {
 
   add: function(word) {
     // console.log("this pointer: ", this);
-    let words = this.get();
+    var words = this.get();
     // unique
     if (words.indexOf(word) < 0) {
       words.push(word);
@@ -99,8 +91,8 @@ var cart = {
   },
 
   remove: function(word) {
-    let words = cart.get();
-    let i = words.indexOf(word);
+    var words = cart.get();
+    var i = words.indexOf(word);
     if (i >= 0) {
       words.splice(i, 1);
       // console.log("words", words);
@@ -112,12 +104,6 @@ var cart = {
     local.removeItem("vbcart");
   }
 };
-// console.log("cart", cart.get());
-// cart.add("test1");
-// cart.add("test2");
-// cart.add("test3");
-// console.log("cart", cart.get());
-// cart.empty();
 
 String.prototype.markdown = function() {
   var ret = $("<div>").html(this);
@@ -159,11 +145,6 @@ String.prototype.markdown = function() {
   // escape special, like <>
   return ret.html();
 };
-
-// var test = '<figure><a href="figre href"><img alt="alt" title="title"></a></figure>' +
-//   '<a class="audio" href="audio href">audio</a>' +
-//   '<a href="a href">link<gehoben>link</a>';
-// console.log(test.markdown());
 
 // rs: <div name="Rechtschreibung">Wort</div>
 var rsItem = function(rs) {
@@ -248,40 +229,19 @@ var rsItem = function(rs) {
   };
 };
 
-// [UnitTest] rsItem
-// var rs = "<div name='deutsch'>deutsch</div>";
-// var rsitem = rsItem(rs);
-// console.log(rsitem);
-// rsitem.add("pronunciation", "pron");
-// rsitem.add("examples", {"e": "m", "x": "a"});
-// rsitem.add("illustrations", "i", "l");
-// console.log(rsitem.get("examples"));
-// rsitem.remove("examples", "x");
-// console.log(rsitem.get("pronunciation"));
-// console.log(rsitem.get("examples"));
-// console.log(rsitem.get("illustrations"));
-// rsitem.clear();
-
 /*
 Vocabulary Builder
 */
 var VBuilder = {
-  Format: {
-    HTML: 1,
-    CSV: 2,
-    Markdown: 3
-  },
 
 	buildHTML: function(keys) {
 		return keys.map(function(k) {
 			var vbItem = rsItem(k);
-			// console.log("output[html]", vbItem.buildHTML());
 			return vbItem.html();
 		}).join("");
 	},
 
   buildCSV: function(keys) {
-    var csv = new csvWriter();
     var tmp = [];
     keys.map(function(k) {
       var vbItem = rsItem(k);
@@ -289,42 +249,39 @@ var VBuilder = {
         tmp.push([k, v]);
       });
     });
-    console.log(tmp);
+    var csv = new csvWriter();
     return csv.arrayToCSV(tmp);
   },
 
 	buildMarkdown: function(keys) {
 		return keys.map(function(k) {
 			var vbItem = rsItem(k);
-			// console.log("output[html]", vbItem.buildHTML());
 			return vbItem.markdown();
 		}).join("\n\n");
 	},
 
 	save: function(format, keys) {
-    let k = keys ? keys : local.getKeys();
+    var k = keys ? keys : local.getKeys();
     var encodedUri;
 
     switch (format) {
-      case this.Format.HTML:
+      case Format.HTML:
         encodedUri = "data:text/html;charset=utf-8," + encodeURIComponent(this.buildHTML(k));
         break;
-      case this.Format.CSV:
+      case Format.CSV:
         encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(this.buildCSV(k));
         break;
-      case this.Format.Markdown:
+      case Format.Markdown:
         encodedUri = "data:text/plain;charset=utf-8," + encodeURIComponent(this.buildMarkdown(k));
         break;
       default:
-        encodedUri = "data:text/plain;charset=utf-8,error: unknown format!"
+        encodedUri = "data:text/plain;charset=utf-8,error: unknown format!";
         break;
     }
 
     window.open(encodedUri);
 	}
 };
-// VBuilder.build();
-// console.log("VBuilder", VBuilder);
 
 $(document).ready(function(){
 
@@ -354,9 +311,9 @@ $(document).ready(function(){
 
   all.append($("<button>").text("Save All").click(function() {
     // alert("Save All!");
-    VBuilder.save(VBuilder.Format.CSV);
+    VBuilder.save(Format.CSV);
   })).append($("<button>").text("Save Cart").click(function() {
-    VBuilder.save(VBuilder.Format.Markdown, cart.get());
+    VBuilder.save(Format.Markdown, cart.get());
     cart.empty();
   })).append($("<button style='float: right'>").text("Clear All").click(function() {
     local.clear();
@@ -386,7 +343,7 @@ $(document).ready(function(){
 
 	var button_save = $("<button>").text("Save").click(function() {
 		// alert("save");
-		VBuilder.save(VBuilder.Format.Markdown, [c_rs]);
+		VBuilder.save(Format.Markdown, [c_rs]);
 	});
 	anki.append(button_save);
 
