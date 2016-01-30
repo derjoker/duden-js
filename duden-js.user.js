@@ -131,10 +131,10 @@ String.prototype.markdown = function() {
 
   // emphasis
   ret.find("em").replaceWith(function() {
-    return ["*", $(this).html(), "*"].join("");
+    return ["*", $.trim($(this).html()), "*"].join("");
   }); // italic
   ret.find("strong").replaceWith(function() {
-    return ["**", $(this).html(), "**"].join("");
+    return ["**", $.trim($(this).html()), "**"].join("");
   }); // bold
 
   // audio: <a class="audio" ...
