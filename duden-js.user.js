@@ -4,7 +4,7 @@
 // @description scrap items as anki card
 // @include     http://www.duden.de/rechtschreibung/*
 // @require	http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.js
-// @version     1.2.0
+// @version     1.2.1
 // @grant       none
 // ==/UserScript==
 
@@ -18,10 +18,8 @@ var local = {
 	data: window.localStorage,
 
 	getItem: function(k) {
-		// console.log('k[para]', k);
-    let item = this.data.getItem(k);
+    var item = this.data.getItem(k);
 		return item ? JSON.parse(item) : undefined;
-		// return JSON.parse(this.data.getItem(k));
 	},
 
 	getKeys: function() {
@@ -32,7 +30,6 @@ var local = {
 				keys.push(key);
 			}
 		}
-		// console.log("keys", keys);
 		return keys;
 	},
 
@@ -41,11 +38,8 @@ var local = {
 
 		for (var index = 0; index < this.data.length; index++) {
 			var key = this.data.key(index);
-			// console.log(key);
 			if (key.indexOf('div name') == 1) {
-				// console.log('key', key);
 				$.map(this.getItem(key), function(v, k) {
-					// console.log(k, v);
 					m.set(k, v);
 				});
 			}
@@ -65,9 +59,19 @@ var local = {
 	clear: function() {
 		this.data.clear();
 	}
-}
-// local.getKeys();
-// console.log('local', local);
+};
+
+var Section = {
+  pronunciation: "pronunciation",
+  examples: "examples",
+  illustrations: "illustrations"
+};
+
+var Format = {
+  HTML: "HTML",
+  CSV: "CSV",
+  Markdown: "Markdown"
+};
 
 var cart = {
   get: function() {
@@ -77,7 +81,7 @@ var cart = {
 
   add: function(word) {
     // console.log("this pointer: ", this);
-    let words = this.get();
+    var words = this.get();
     // unique
     if (words.indexOf(word) < 0) {
       words.push(word);
@@ -87,8 +91,8 @@ var cart = {
   },
 
   remove: function(word) {
-    let words = cart.get();
-    let i = words.indexOf(word);
+    var words = cart.get();
+    var i = words.indexOf(word);
     if (i >= 0) {
       words.splice(i, 1);
       // console.log("words", words);
@@ -99,243 +103,185 @@ var cart = {
   empty: function() {
     local.removeItem("vbcart");
   }
-}
-// console.log("cart", cart.get());
-// cart.add("test1");
-// cart.add("test2");
-// cart.add("test3");
-// console.log("cart", cart.get());
-// cart.empty();
-
-function VBItem(key) {
-	this.key = key;
-	this.sections = local.getItem(key) ? local.getItem(key) : {};
 };
 
-VBItem.prototype.index = {
-	examples: "examples",
-	pronunciation: "pronunciation",
-	illustrations: "illustrations"
-};
+String.prototype.markdown = function() {
+  var ret = $("<div>").html(this);
 
-// save after any change of this.sections
-VBItem.prototype.save = function() {
-	local.setItem(this.key, this.sections);
-};
-
-VBItem.prototype.clear = function() {
-	this.sections = {};
-	local.removeItem(this.key);
-};
-
-VBItem.prototype.examples = function() {
-	return this.sections[this.index.examples] || {};
-};
-
-VBItem.prototype.addExample = function(example, definition) {
-	this.sections[this.index.examples] = this.examples();
-	this.sections[this.index.examples][example] = definition;
-	this.save();
-};
-
-VBItem.prototype.removeExample = function(example) {
-	delete this.sections[this.index.examples][example];
-	this.save();
-};
-
-VBItem.prototype.pronunciation = function(value) {
-	if (value === undefined) {
-		return this.sections[this.index.pronunciation];
-	}
-	else {
-		this.sections[this.index.pronunciation] = value;
-		this.save();
-	}
-};
-
-VBItem.prototype.illustrations = function() {
-	return this.sections[this.index.illustrations] || {};
-};
-
-VBItem.prototype.addIllustration = function(figure, definition) {
-	this.sections[this.index.illustrations] = this.illustrations();
-	this.sections[this.index.illustrations][figure] = definition;
-	this.save();
-};
-
-VBItem.prototype.toArray = function() {
-  var ret = [];
-  $.map(this.examples(), function(v, k) {
-    ret.push([k, v]);
+  // text
+  ["span", "li"].forEach(function (item, index, array) {
+    ret.find(item).replaceWith(function() {
+      return $(this).html();
+    });
   });
-  return ret;
-};
 
-VBItem.prototype.buildHTML = function() {
-	var ret = $(this.key);
-	$.map(this.examples(), function(v, k) {
-		ret.append(
-			$("<div class='vb_card'>")
-				.append($("<div class='front'>").html(k))
-				.append($("<div class='back'>").html(v))
-		);
-	});
-	return $("<div>").append(ret).html();
-};
+  // emphasis
+  ret.find("em").replaceWith(function() {
+    return ["*", $.trim($(this).html()), "*"].join("");
+  }); // italic
+  ret.find("strong").replaceWith(function() {
+    return ["**", $.trim($(this).html()), "**"].join("");
+  }); // bold
 
-VBItem.prototype.buildMarkdown = function() {
-  var h2 = "## " + $(this.key).text();
-	let tmp = [h2];
-	let audio = VBMarkdown.audio(this.pronunciation());
-	if (audio != undefined) {
-		tmp.push(audio);
-	}
-  $.map(this.illustrations(), function(v, k) {
-    // console.log($(k).find("a").attr("href"));
-    var fig = $(k);
-    var alt = fig.find("img").attr("alt");
-    // console.log(alt);
-    var title = fig.find("img").attr("title");
-    // console.log(title);
-    var src = fig.find("a").attr("href");
-    // console.log(src);
-    fig.find("a").replaceWith($("<img>").attr({
-      alt: alt, title: title, src: src
-    }));
-    var f = $("<div>").append(fig).html();
-    tmp.push(
-      [f,
-      "\n> ",
-			VBMarkdown.markdown(v),
-			"\n"].join("")
-    );
+  // audio: <a class="audio" ...
+  ret.find("a.audio").replaceWith(function() {
+    return ["<audio controls='controls' src='",
+            $(this).attr("href"),
+            "'></audio>"].join("");
   });
-	$.map(this.examples(), function(v, k) {
-		tmp.push(
-			["### ",
-			VBMarkdown.markdown(k),
-			"\n> ",
-			VBMarkdown.markdown(v),
-			"\n"].join("")
-		);
-	});
-	return tmp.join("\n");
+  // figure: <figure><a><img></a></figure>
+  ret.find("figure").replaceWith(function() {
+    var alt = $(this).find("img").attr("alt");
+    var title = $(this).find("img").attr("title");
+    var src = $(this).find("a").attr("href");
+    var cap = $(this).find("figcaption").text();
+    return ["![", alt, "](", src, " \"", title, "\")<br>", cap].join("");
+  })
+  // normal link: <a>
+  ret.find("a").replaceWith(function() {
+    return ["[", $(this).text(), "]", "(", $(this).attr("href"), ")"].join("");
+  });
+
+  // escape special, like <>
+  return ret.html();
 };
 
-// UnitTest
-// var vbItemTest = new VBItem("<div name='test'></div>");
-// vbItemTest.addExample(1, 1);
-// console.log("Beispiele", vbItemTest.examples());
-// vbItemTest.pronunciation("pronunciation");
-// console.log("Aussprache", vbItemTest.pronunciation());
-// console.log("Bilder", vbItemTest.illustrations());
+// rs: <div name="Rechtschreibung">Wort</div>
+var rsItem = function(rs) {
 
-/*
-Output Format
-*/
-var VBMarkdown = {
-	// html -> html (with markdown link)
-	link: function(h) {
-		var tmp = $("<div>").html(h);
-		tmp.find("a").replaceWith(function() {
-			return ["[", $(this).text(), "]", "(", $(this).attr("href"), ")"].join("");
-		});
-		return tmp;
-	},
+  var obj = local.getItem(rs) || {};
 
-	// html -> text
-	text: function(h) {
-		// escape special, like <>
-		return $("<div>").text(
-			$("<div>").html(h).text()
-		).html();
-	},
+  var isObject = function(section) {
+    return ["examples", "illustrations"].indexOf(section) >= 0;
+  };
 
-	audio: function(h) {
-		if (h == undefined) {
-			return undefined;
-		}
-		var tmp = $("<div>").html(h);
-		tmp.find("a.audio").replaceWith(function() {
-			// alert($(this).attr("href"));
-			return ["<audio controls='controls' src='",
-							$(this).attr("href"),
-							"'></audio>"].join("");
-		});
-		return tmp.html();
-	},
+  return {
 
-	markdown: function(h) {
-		// console.log(this.text(h));
-		return this.text(this.link(h));
-	}
-};
+    save: function() {
+      local.setItem(rs, obj);
+    },
 
-var VBHTML = {
-	html: function() {}
+    clear: function() {
+      local.removeItem(rs);
+      obj = {};
+    },
+
+    get: function(section, key) {
+      if (isObject(section)) {
+        var sectionObj = obj[section] || {};
+        if (key === undefined) return sectionObj;
+        return sectionObj[key];
+      }
+      return obj[section];
+    },
+
+    add: function(section, a, b) {
+      if (isObject(section)) {
+        var sectionObj = obj[section] = obj[section] || {};
+        if (typeof a !== "string") for (var k in a) sectionObj[k] = a[k];
+        else sectionObj[a] = b;
+      } else obj[section] = a;
+
+      this.save();
+    },
+
+    remove: function(section, key) {
+      if (obj[section] !== undefined) {
+        if (key === undefined) delete obj[section];
+        else delete obj[section][key];
+        this.save();
+      }
+    },
+
+    markdown: function() {
+      var h2 = "## " + $(rs).text();
+    	var ret = [h2];
+
+    	var audio = this.get("pronunciation");
+    	if (audio !== undefined) ret.push(audio.markdown());
+
+      $.map(this.get("illustrations"), function(v, k) {
+        ret.push(
+          [k.markdown(), "\n> ", v.markdown(), "\n"].join("")
+        );
+      });
+
+    	$.map(this.get("examples"), function(v, k) {
+    		ret.push(
+    			["### ", k.markdown(), "\n> ", v.markdown(), "\n"].join("")
+    		);
+    	});
+
+    	return ret.join("\n");
+    },
+
+    html: function() {
+      var ret = $(rs);
+    	$.map(this.get("examples"), function(v, k) {
+    		ret.append(
+    			$("<div class='vb_card'>")
+    				.append($("<div class='front'>").html(k))
+    				.append($("<div class='back'>").html(v))
+    		);
+    	});
+    	return $("<div>").append(ret).html();
+    }
+  };
 };
 
 /*
 Vocabulary Builder
 */
 var VBuilder = {
-  Format: {
-    HTML: 1,
-    CSV: 2,
-    Markdown: 3
-  },
 
 	buildHTML: function(keys) {
 		return keys.map(function(k) {
-			var vbItem = new VBItem(k);
-			// console.log("output[html]", vbItem.buildHTML());
-			return vbItem.buildHTML();
+			var vbItem = rsItem(k);
+			return vbItem.html();
 		}).join("");
 	},
 
   buildCSV: function(keys) {
-    var csv = new csvWriter();
     var tmp = [];
     keys.map(function(k) {
-      var vbItem = new VBItem(k);
-      tmp = tmp.concat(vbItem.toArray());
+      var vbItem = rsItem(k);
+      $.map(vbItem.get("examples"), function(v, k) {
+        tmp.push([k, v]);
+      });
     });
-    // console.log(tmp);
+    var csv = new csvWriter();
     return csv.arrayToCSV(tmp);
   },
 
 	buildMarkdown: function(keys) {
 		return keys.map(function(k) {
-			var vbItem = new VBItem(k);
-			// console.log("output[html]", vbItem.buildHTML());
-			return vbItem.buildMarkdown();
+			var vbItem = rsItem(k);
+			return vbItem.markdown();
 		}).join("\n\n");
 	},
 
 	save: function(format, keys) {
-    let k = keys ? keys : local.getKeys();
+    var k = keys ? keys : local.getKeys();
     var encodedUri;
 
     switch (format) {
-      case this.Format.HTML:
+      case Format.HTML:
         encodedUri = "data:text/html;charset=utf-8," + encodeURIComponent(this.buildHTML(k));
         break;
-      case this.Format.CSV:
+      case Format.CSV:
         encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(this.buildCSV(k));
         break;
-      case this.Format.Markdown:
+      case Format.Markdown:
         encodedUri = "data:text/plain;charset=utf-8," + encodeURIComponent(this.buildMarkdown(k));
         break;
       default:
-        encodedUri = "data:text/plain;charset=utf-8,error: unknown format!"
+        encodedUri = "data:text/plain;charset=utf-8,error: unknown format!";
         break;
     }
 
     window.open(encodedUri);
 	}
 };
-// VBuilder.build();
-// console.log("VBuilder", VBuilder);
 
 $(document).ready(function(){
 
@@ -350,10 +296,10 @@ $(document).ready(function(){
 							"'>",
 							word,
 							"</div>"].join("");
-	var currentItem = new VBItem(c_rs);
+	var currentItem = rsItem(c_rs);
 	// console.log('currentItem', currentItem);
   // keys of examples for current item
-  var cie_keys = Object.keys(currentItem.examples());
+  var cie_keys = Object.keys(currentItem.get("examples"));
   // console.log("keys", cie_keys);
 
 	/*
@@ -365,9 +311,9 @@ $(document).ready(function(){
 
   all.append($("<button>").text("Save All").click(function() {
     // alert("Save All!");
-    VBuilder.save(VBuilder.Format.CSV);
+    VBuilder.save(Format.CSV);
   })).append($("<button>").text("Save Cart").click(function() {
-    VBuilder.save(VBuilder.Format.Markdown, cart.get());
+    VBuilder.save(Format.Markdown, cart.get());
     cart.empty();
   })).append($("<button style='float: right'>").text("Clear All").click(function() {
     local.clear();
@@ -397,7 +343,7 @@ $(document).ready(function(){
 
 	var button_save = $("<button>").text("Save").click(function() {
 		// alert("save");
-		VBuilder.save(VBuilder.Format.Markdown, [c_rs]);
+		VBuilder.save(Format.Markdown, [c_rs]);
 	});
 	anki.append(button_save);
 
@@ -421,8 +367,7 @@ $(document).ready(function(){
 		},
 
 		update: function() {
-			// this.append(local.getAllItems());
-			this.append(currentItem.examples());
+			this.append(currentItem.get("examples"));
 		}
 	};
 	// console.log('ankicontent', ankicontent);
@@ -467,10 +412,11 @@ $(document).ready(function(){
 		}
   }));
 
-  // Aussprache
+  // Aussprache: <div class="entry">
 	$("a.audio").click(function() {
-		// alert($(this).parent().html());
-		currentItem.pronunciation($(this).parent().html());
+		// console.log($(this).parentsUntil("div.entry"));
+		currentItem.add("pronunciation",
+      $(this).parentsUntil("div.entry").parent().html());
 	});
 
 	// Bilder
@@ -487,7 +433,7 @@ $(document).ready(function(){
                       .html();
 		// console.log("figure", figure);
 		// console.log("definition", definition);
-    currentItem.addIllustration(figure, definition)
+    currentItem.add("illustrations", figure, definition)
 	});
 
 	// Bedeutungen, Beispiele und Wendungen
@@ -543,11 +489,11 @@ $(document).ready(function(){
 
 	$("button.vb_toggle").click(function(){
 		if ($(this).text() == "Add") {
-			currentItem.addExample($(this).data("key"), $(this).data("value"));
+			currentItem.add("examples", $(this).data("key"), $(this).data("value"));
 			$(this).text("Remove");
 		}
 		else {
-			currentItem.removeExample($(this).data("key"));
+			currentItem.remove("examples", $(this).data("key"));
 			$(this).text("Add");
 		}
 
