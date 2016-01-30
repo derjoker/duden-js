@@ -148,7 +148,8 @@ String.prototype.markdown = function() {
     var alt = $(this).find("img").attr("alt");
     var title = $(this).find("img").attr("title");
     var src = $(this).find("a").attr("href");
-    return ["![", title, "](", src, " \"", alt, "\")"].join("");
+    var cap = $(this).find("figcaption").text();
+    return ["![", alt, "](", src, " \"", title, "\")<br>", cap].join("");
   })
   // normal link: <a>
   ret.find("a").replaceWith(function() {
