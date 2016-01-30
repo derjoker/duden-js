@@ -65,9 +65,21 @@ var local = {
 	clear: function() {
 		this.data.clear();
 	}
-}
+};
 // local.getKeys();
 // console.log('local', local);
+
+var Section = {
+  pronunciation: "pronunciation",
+  examples: "examples",
+  illustrations: "illustrations"
+};
+
+var Format = {
+  HTML: "HTML",
+  CSV: "CSV",
+  Markdown: "Markdown"
+};
 
 var cart = {
   get: function() {
@@ -99,7 +111,7 @@ var cart = {
   empty: function() {
     local.removeItem("vbcart");
   }
-}
+};
 // console.log("cart", cart.get());
 // cart.add("test1");
 // cart.add("test2");
@@ -152,16 +164,18 @@ String.prototype.markdown = function() {
 //   '<a href="a href">link<gehoben>link</a>';
 // console.log(test.markdown());
 
+// rs: <div name="Rechtschreibung">Wort</div>
 var rsItem = function(rs) {
 
-  // index: examples, pronunciation, illustrations
-
   var obj = local.getItem(rs) || {};
+
+  var isObject = function(section) {
+    return ["examples", "illustrations"].indexOf(section) >= 0;
+  };
 
   return {
 
     save: function() {
-      // console.log(rs, obj);
       local.setItem(rs, obj);
     },
 
@@ -171,29 +185,20 @@ var rsItem = function(rs) {
     },
 
     get: function(section, key) {
-      // case: pronunciation
-      if (section === "pronunciation") return obj[section];
-      // case: examples, illustrations
-      if (["examples", "illustrations"].indexOf(section) !== -1) {
-        var sectionObj = obj[section] = obj[section] || {};
+      if (isObject(section)) {
+        var sectionObj = obj[section] || {};
         if (key === undefined) return sectionObj;
         return sectionObj[key];
       }
+      return obj[section];
     },
 
     add: function(section, a, b) {
-      var sectionObj = this.get(section);
-
-      if (typeof sectionObj === "object") { // examples, illustrations
-        if (typeof a === "string") {
-          // a, b (string)
-          if (typeof b === "string") sectionObj[a] = b;
-        } else { // a (object)
-          for (var k in a) sectionObj[k] = a[k];
-        }
-      } else { // pronunciation: a (string)
-        if (typeof a === "string") obj[section] = a;
-      }
+      if (isObject(section)) {
+        var sectionObj = obj[section] = obj[section] || {};
+        if (typeof a !== "string") for (var k in a) sectionObj[k] = a[k];
+        else sectionObj[a] = b;
+      } else obj[section] = a;
 
       this.save();
     },
