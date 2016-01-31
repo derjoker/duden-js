@@ -461,26 +461,18 @@ $(document).ready(function(){
 		bedeutung.children("figure").remove();
 		// console.log("bedeutung", bedeutung);
 
-		// Wendung (better: re-assign key & value)
-		var wendung = content.children("span.iwtext");
-		// console.log("wendung", wendung);
-		var w_info = content.children("span.iw_rumpf_info");
-		// console.log("wendung info", w_info);
-
-		var key, value;
-		if (wendung.length != 0 && w_info.length != 0) {
-			// alert("inside wendung");
-			key = wendung;
-			value = w_info;
-		}
+    var key, value = $("<div>");
+    if (content.contents().length > 2) {
+      key = content.children("span.iwtext");
+      content.children("span.iw_rumpf_info").map(function(){
+        value.append($("<div>").append(this));
+      });
+    }
 		else {
 			key = content;
-			value = $("<div>")
-								.append($("<span>").text(word + " : "))
-								.append($("<span>").html(bedeutung.html()));
+			value.append($("<span>").text(word + " : "))
+        .append($("<span>").html(bedeutung.html()));
 		}
-    // console.log("key", key.html());
-    // console.log("value", value.html());
     $(this).data({"key": key.html(), "value": value.html()});
     // console.log("data", $(this).data());
   });
