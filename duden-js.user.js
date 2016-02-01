@@ -462,13 +462,23 @@ $(document).ready(function(){
 		// console.log("bedeutung", bedeutung);
 
     var key, value = $("<div>");
-    if (content.contents().length > 2) {
-      key = content.children("span.iwtext");
-      content.children("span.iw_rumpf_info").map(function(){
-        value.append($("<div>").append(this));
-      });
-    }
-		else {
+    var inWendung = false;
+
+    // Wendungen, Redensarten, Sprichwörter
+    key = content.children("span.iwtext");
+    content.contents().each(function() {
+      if ($.trim(this.textContent) === ")") {
+        inWendung = false;
+      }
+      if (inWendung) {
+        value.append(this);
+      }
+      if ($.trim(this.textContent) === "(") {
+        inWendung = true;
+      }
+    });
+    // Beispiele
+		if (key === undefined || value.html() === "") {
 			key = content;
 			value.append($("<span>").text(word + " : "))
         .append($("<span>").html(bedeutung.html()));
