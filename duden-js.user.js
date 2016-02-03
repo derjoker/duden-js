@@ -283,6 +283,16 @@ var VBuilder = {
 	}
 };
 
+var simplify = function(jq) {
+  // remove <span>
+  while (jq.find("span").length) {
+    jq.find("span").replaceWith(function() {
+      return $(this).html();
+    });
+  }
+  return jq.html();
+};
+
 $(document).ready(function(){
 
 	/*
@@ -464,27 +474,29 @@ $(document).ready(function(){
     var key, value = $("<div>");
     var inWendung = false;
 
-    // Wendungen, Redensarten, Sprichwörter
-    key = content.children("span.iwtext");
-    content.contents().each(function() {
-      if ($.trim(this.textContent) === ")") {
-        inWendung = false;
-      }
-      if (inWendung) {
-        value.append(this);
-      }
-      if ($.trim(this.textContent) === "(") {
-        inWendung = true;
-      }
-    });
-    // Beispiele
-		if (key === undefined || value.html() === "") {
-			key = content;
-			value.append($("<span>").text(word + " : "))
-        .append($("<span>").html(bedeutung.html()));
+    key = content.children("span.iwtext").remove();
+
+		if (key.length) { // Wendungen, Redensarten, Sprichwörter
+      var iw_term = false;
+      // remove "()"
+      // console.log($("<span>").html($.trim(content.html()).slice(1,-1)).contents());
+      $("<span>").html($.trim(content.html()).slice(1,-1)).contents().each(function() {
+        if ($(this).is("span.iw_term")) {
+          value.append("<div>");
+          iw_term = true;
+        }
+        if (iw_term) $("div:last", value).append(this);
+        else value.append(this);
+      });
+    } else { // Beispiele
+      key = content;
+			value.append($("<div>").text(word))
+        .append($("<div>").html(bedeutung.html()));
 		}
-    $(this).data({"key": key.html(), "value": value.html()});
+    
+    $(this).data({"key": simplify(key), "value": simplify(value)});
     // console.log("data", $(this).data());
+    currentItem.add("examples", $(this).data("key"), $(this).data("value"));
   });
 
   VBView.update();
