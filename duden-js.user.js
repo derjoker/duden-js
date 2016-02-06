@@ -290,7 +290,11 @@ var simplify = function(jq) {
       return $(this).html();
     });
   }
-  return jq.html();
+  // trim <div>
+  jq.find("div").each(function() {
+    $(this).html($.trim($(this).html()));
+  });
+  return $.trim(jq.html());
 };
 
 $(document).ready(function(){
@@ -471,10 +475,8 @@ $(document).ready(function(){
 		bedeutung.children("figure").remove();
 		// console.log("bedeutung", bedeutung);
 
-    var key, value = $("<div>");
-    var inWendung = false;
-
-    key = content.children("span.iwtext").remove();
+    var key = content.children("span.iwtext").remove(),
+      value = $("<div>");
 
 		if (key.length) { // Wendungen, Redensarten, Sprichwörter
       var iw_term = false;
@@ -496,7 +498,7 @@ $(document).ready(function(){
     
     $(this).data({"key": simplify(key), "value": simplify(value)});
     // console.log("data", $(this).data());
-    currentItem.add("examples", $(this).data("key"), $(this).data("value"));
+    // currentItem.add("examples", $(this).data("key"), $(this).data("value"));
   });
 
   VBView.update();
