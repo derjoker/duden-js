@@ -475,10 +475,11 @@ $(document).ready(function(){
 		bedeutung.children("figure").remove();
 		// console.log("bedeutung", bedeutung);
 
-    var key = content.children("span.iwtext").remove(),
-      value = $("<div>");
+    var key, value = $("<div>");
 
-		if (key.length) { // Wendungen, Redensarten, Sprichwörter
+		if (content.find("span.iwtext").length
+      && content.find("span.iw_rumpf_info").length) { // Wendungen, Redensarten, Sprichwörter
+      key = content.children("span.iwtext").remove();
       var iw_term = false;
       // remove "()"
       // console.log($("<span>").html($.trim(content.html()).slice(1,-1)).contents());
@@ -515,10 +516,7 @@ $(document).ready(function(){
 
 		ankicontent.update();
 	});
-
-	// "Add" -> "Remove", if exists
-	// $.map(local.obj, function(value, key) {});
-
+  
 });
 
 /**
