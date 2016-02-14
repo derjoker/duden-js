@@ -283,6 +283,20 @@ var VBuilder = {
 	}
 };
 
+var simplify = function(jq) {
+  // remove <span>
+  while (jq.find("span").length) {
+    jq.find("span").replaceWith(function() {
+      return $(this).html();
+    });
+  }
+  // trim <div>
+  jq.find("div").each(function() {
+    $(this).html($.trim($(this).html()));
+  });
+  return $.trim(jq.html());
+};
+
 $(document).ready(function(){
 
 	/*
@@ -461,28 +475,31 @@ $(document).ready(function(){
 		bedeutung.children("figure").remove();
 		// console.log("bedeutung", bedeutung);
 
-		// Wendung (better: re-assign key & value)
-		var wendung = content.children("span.iwtext");
-		// console.log("wendung", wendung);
-		var w_info = content.children("span.iw_rumpf_info");
-		// console.log("wendung info", w_info);
+    var key, value = $("<div>");
 
-		var key, value;
-		if (wendung.length != 0 && w_info.length != 0) {
-			// alert("inside wendung");
-			key = wendung;
-			value = w_info;
+		if (content.find("span.iwtext").length
+      && content.find("span.iw_rumpf_info").length) { // Wendungen, Redensarten, Sprichwörter
+      key = content.children("span.iwtext").remove();
+      var iw_term = false;
+      // remove "()"
+      // console.log($("<span>").html($.trim(content.html()).slice(1,-1)).contents());
+      $("<span>").html($.trim(content.html()).slice(1,-1)).contents().each(function() {
+        if ($(this).is("span.iw_term")) {
+          value.append("<div>");
+          iw_term = true;
+        }
+        if (iw_term) $("div:last", value).append(this);
+        else value.append(this);
+      });
+    } else { // Beispiele
+      key = content;
+			value.append($("<div>").text(word))
+        .append($("<div>").html(bedeutung.html()));
 		}
-		else {
-			key = content;
-			value = $("<div>")
-								.append($("<span>").text(word + " : "))
-								.append($("<span>").html(bedeutung.html()));
-		}
-    // console.log("key", key.html());
-    // console.log("value", value.html());
-    $(this).data({"key": key.html(), "value": value.html()});
+    
+    $(this).data({"key": simplify(key), "value": simplify(value)});
     // console.log("data", $(this).data());
+    // currentItem.add("examples", $(this).data("key"), $(this).data("value"));
   });
 
   VBView.update();
@@ -499,10 +516,7 @@ $(document).ready(function(){
 
 		ankicontent.update();
 	});
-
-	// "Add" -> "Remove", if exists
-	// $.map(local.obj, function(value, key) {});
-
+  
 });
 
 /**
