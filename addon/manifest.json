@@ -24,8 +24,12 @@
 
   "content_scripts": [
     {
+      "matches": ["*://*.de/*"],
+      "js": ["dbclick.js"]
+    },
+    {
       "matches": ["*://*.duden.de/*"],
-      "js": ["duden.js"]
+      "js": ["MooTools-Core-1.6.0.js", "duden.js"]
     }
   ]
 
