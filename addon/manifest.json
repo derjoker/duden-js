@@ -1,0 +1,32 @@
+{
+
+  "manifest_version": 2,
+  "name": "duden",
+  "version": "0.0.1",
+  "description": "tweak duden",
+  "homepage_url": "https://github.com/DerJoker/duden-js",
+
+  "applications": {
+    "gecko": {
+      "id": "fengya04@126.com"
+    }
+  },
+
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "*://*.duden.de/*"
+  ],
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.duden.de/*"],
+      "js": ["duden.js"]
+    }
+  ]
+
+}
