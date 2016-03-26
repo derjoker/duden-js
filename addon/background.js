@@ -7,10 +7,9 @@ browser.webRequest.onBeforeRequest.addListener(
     return {cancel: true};
   },
   {urls: [
-    "*://*.bdstatic.com/*",
     "*://*.googleadservices.com/*",
     "*://*.googleapis.com/*",
-    // "*://*.googletagservices.com/*"
+    "*://*.googletagservices.com/*",
     "*://*.googlesyndication.com/*",
     "*://*.google-analytics.com/",
     "*://*.meetrics.net/*"
