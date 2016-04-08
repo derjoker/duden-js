@@ -7,6 +7,7 @@ browser.webRequest.onBeforeRequest.addListener(
     return {cancel: true};
   },
   {urls: [
+    "*://apis.google.com/*",
     "*://*.googleadservices.com/*",
     "*://*.googleapis.com/*",
     "*://*.googletagservices.com/*",
