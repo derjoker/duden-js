@@ -14,8 +14,7 @@
 
   "permissions": [
     "webRequest",
-    "webRequestBlocking",
-    "*://*.duden.de/*"
+    "webRequestBlocking"
   ],
 
   "background": {
