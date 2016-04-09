@@ -19,7 +19,7 @@
   ],
 
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["blockcn.js"]
   },
 
   "content_scripts": [
