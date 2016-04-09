@@ -14,7 +14,8 @@
 
   "permissions": [
     "webRequest",
-    "webRequestBlocking"
+    "webRequestBlocking",
+    "storage"
   ],
 
   "background": {
