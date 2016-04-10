@@ -12,7 +12,16 @@ var storagex = {
   set: function(key, value) {
     window.localStorage.setItem(key, JSON.stringify(value));
   }
-}
+};
+
+var Rechtschreibung = function(key, value) {
+  return {
+    add: function() {},
+    remove: function() {},
+    reset: function() {},
+    clear: function() {}
+  }
+};
 
 var local = {
 
@@ -336,7 +345,7 @@ $(document).ready(function(){
     add: function() {},
     remove: function() {},
     edit: function() {},
-    restore: function() {},
+    reset: function() {},
     clear: function() {
       this.value = {};
     }
