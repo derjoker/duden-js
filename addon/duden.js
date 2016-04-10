@@ -4,6 +4,16 @@
 // $("h1").hide()
 // alert('Hallo duden! Word missing ...');
 
+var storagex = {
+  get: function(key) {
+    var item = window.localStorage.getItem(key);
+    return item ? JSON.parse(item) : {};
+  },
+  set: function(key, value) {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  }
+}
+
 var local = {
 
 	data: window.localStorage,
@@ -306,6 +316,36 @@ $(document).ready(function(){
   // keys of examples for current item
   var cie_keys = Object.keys(currentItem.get("examples"));
   // console.log("keys", cie_keys);
+
+  /*
+  style="display:none/inline"
+  {
+    wort: str,
+    aussprache: html,
+    bedeutungen: [{
+      bedeutung: html,
+      bildung: html,
+      beispiele: [html],
+      anwendungen: [html]
+    }]
+  }
+  */
+  var rsx = {
+    key: window.location.href.split('/')[4].split('#')[0],
+    value: storagex.get(this.key),
+    add: function() {},
+    remove: function() {},
+    edit: function() {},
+    restore: function() {},
+    clear: function() {
+      this.value = {};
+    }
+  };
+
+  // save before close
+  $(window).unload(function() {
+    storagex.set(rsx.key, rsx.value);
+  });
 
 	/*
 	View
