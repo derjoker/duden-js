@@ -2,27 +2,29 @@
 'use strict';
 
 (function() {
+  var ContClass = window.ContClass = {
+    editable: 'editable',
+    raw: 'raw',
+    copy: 'copy'
+  };
+
   var editable = window.editable = function(elem) {
     // interpret original or editable elem
-    var raw = $(elem).html();
-    var copy = raw;
+    var tmp = $(elem);
+    if (!tmp.hasClass(ContClass.editable)) {
+      tmp = $('<span>').addClass(ContClass.editable)
+        .append($('<span>').addClass(ContClass.copy).append(tmp.html()))
+        .append($('<span>').addClass(ContClass.raw).append(tmp.html()));
+    }
+    var rawhtml = $('span.' + ContClass.raw, tmp).html();
     return {
-      get: function() { return copy },
-      set: function(newhtml) { copy = newhtml },
-      reset: function() { copy = raw },
-      tohtml: function(cont) {
-        var rawhtml = '<span>' + raw + '</span>';
-        var copyhtml = '<span>' + copy + '</span>';
-        if (cont == 'raw') {
-          return rawhtml;
-        }
-        if (cont == 'copy') {
-          return copyhtml;
-        }
-        return '<span>' + rawhtml + copyhtml + '</span>';
+      get: function() { return tmp },
+      set: function(newhtml) {
+        $('span.' + ContClass.copy, tmp).html(newhtml);
       },
+      reset: function() { this.set(rawhtml); },
       compatibleWith: function(el) {
-        return raw == $(el).html();
+        return rawhtml == $(el).html();
       }
     };
   };
