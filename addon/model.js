@@ -28,4 +28,8 @@
       }
     };
   };
+
+  var hide = window.hide = function() {
+    $('span.' + ContClass.raw).hide();
+  }
 })();
