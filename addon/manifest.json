@@ -31,7 +31,7 @@
     },
     {
       "matches": ["*://*.duden.de/rechtschreibung/*"],
-      "js": ["jquery-2.1.4.js", "duden.js"],
+      "js": ["jquery-2.1.4.js", "model.js", "tweak.js"],
       "run_at": "document_end"
     }
   ]
