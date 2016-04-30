@@ -30,9 +30,13 @@
       "all_frames": true
     },
     {
-      "matches": ["*://*.duden.de/rechtschreibung/*"],
-      "js": ["jquery.js", "underscore.js", "backbone.js",
-        "model.js", "view.js", "tweak.js"],
+      "matches": ["*://*.duden.de/rechtschreibung/*", "file:///*"],
+      "js": [
+        "modules/jquery.js",
+        "modules/underscore.js",
+        "modules/backbone.js",
+        "model.js", "view.js", "tweak.js"
+      ],
       "run_at": "document_end"
     }
   ]
