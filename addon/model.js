@@ -1,6 +1,12 @@
 
 'use strict';
 
+var duden = duden || {
+  model: {},
+  collection: {},
+  view: {}
+};
+
 (function() {
   var ContClass = window.ContClass = {
     editable: 'editable',
@@ -29,7 +35,28 @@
     };
   };
 
-  var hide = window.hide = function() {
-    $('span.' + ContClass.raw).hide();
-  }
+  duden.model.Editable = Backbone.Model.extend({
+    defaults: {
+      html: '<span class="editable"></span>'
+    }
+  });
+
+  duden.model.Bedeutung = Backbone.Model.extend({
+    defaults: {
+      bedeutung: '',
+      figuren: '',
+      beispiele: [],
+      wendungen: []
+    }
+  });
+
+  duden.model.Rechtschreibung = Backbone.Model.extend({
+    defaults: {
+      rechtschreibung: '',
+      wort: '',
+      aussprache: '',
+      bedeutungen: []
+    }
+  });
+
 })();

@@ -31,11 +31,14 @@
     },
     {
       "matches": ["*://*.duden.de/rechtschreibung/*", "file:///*"],
+      "css": ["css/base.css"],
       "js": [
         "modules/jquery.js",
         "modules/underscore.js",
         "modules/backbone.js",
-        "model.js", "view.js", "tweak.js"
+        "model.js",
+        "view.js",
+        "tweak.js"
       ],
       "run_at": "document_end"
     }
